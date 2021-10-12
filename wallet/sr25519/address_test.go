@@ -49,7 +49,7 @@ func TestAddress_ZeroCmp(t *testing.T) {
 	rng := pkgtest.Prng(t)
 	r := test.NewRandomizer()
 	addr := r.NewRandomAddress(rng)
-	zero := wallet.NewAddressZero()
+	zero := test.NewAddressZero()
 
 	for i := 0; i < 1000; i++ {
 		require.False(t, addr.Cmp(zero) < 0)

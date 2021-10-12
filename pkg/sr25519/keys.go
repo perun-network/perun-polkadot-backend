@@ -73,9 +73,3 @@ func NewSkFromRng(rng io.Reader) (*schnorrkel.MiniSecretKey, error) {
 	}
 	return NewSk(data[:])
 }
-
-// ZeroPk returns a PK that can be used to create a zero address.
-func ZeroPk() *schnorrkel.PublicKey {
-	zero, _ := NewPk([]byte{})
-	return zero
-}

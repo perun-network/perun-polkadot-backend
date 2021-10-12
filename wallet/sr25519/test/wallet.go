@@ -19,6 +19,7 @@ import (
 
 	pwallet "perun.network/go-perun/wallet"
 
+	"github.com/ChainSafe/go-schnorrkel"
 	pkgsr25519 "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 )
@@ -41,4 +42,16 @@ func (w *Wallet) NewRandomAccount(rng *rand.Rand) pwallet.Account {
 		panic(err)
 	}
 	return w.Wallet.ImportSK(sk)
+}
+
+// NewAddressZero returns a zero address that is strictly smaller than all
+// other addresses.
+func NewAddressZero() *sr25519.Address {
+	return sr25519.NewAddressFromPk(ZeroPk())
+}
+
+// ZeroPk returns a PK that can be used to create a zero address.
+func ZeroPk() *schnorrkel.PublicKey {
+	zero, _ := pkgsr25519.NewPk([]byte{})
+	return zero
 }

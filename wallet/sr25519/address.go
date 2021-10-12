@@ -23,8 +23,6 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	pkgio "perun.network/go-perun/pkg/io"
 	pwallet "perun.network/go-perun/wallet"
-
-	"github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 )
 
 // Address implements the Address interface.
@@ -38,12 +36,6 @@ const AddressLen = 32
 // NewAddressFromPk returns a new Address from a public key.
 func NewAddressFromPk(pk *schnorrkel.PublicKey) *Address {
 	return &Address{pk}
-}
-
-// NewAddressZero returns a zero address that is strictly smaller than all
-// other addresses.
-func NewAddressZero() *Address {
-	return NewAddressFromPk(sr25519.ZeroPk())
 }
 
 // Bytes returns the address encoded as byte slice.
