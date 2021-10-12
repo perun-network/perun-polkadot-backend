@@ -40,13 +40,14 @@ func NewAddressFromPK(pk *schnorrkel.PublicKey) *Address {
 
 // Bytes returns the address encoded as byte slice.
 func (a *Address) Bytes() []byte {
-	b := a.pk.Encode()
-	return b[:]
+	bytes := [AddressLen]byte(a.pk.Encode())
+	return bytes[:]
 }
 
 // Encode encodes an Address. Needed by the Perun Address interface.
 func (a *Address) Encode(w io.Writer) error {
-	return pkgio.Encode(w, a.pk.Encode())
+	bytes := [AddressLen]byte(a.pk.Encode())
+	return pkgio.Encode(w, bytes)
 }
 
 // Decode decodes an Address. Needed by the Perun Address interface.
