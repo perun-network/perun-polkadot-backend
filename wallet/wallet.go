@@ -37,7 +37,7 @@ type (
 	}
 )
 
-// IsAcc returns whether an perun Account is an Account.
+// IsAcc returns whether a Perun Account has the expected Account type.
 func IsAcc(acc pwallet.Account) bool {
 	_, ok := acc.(Account)
 	return ok
@@ -48,7 +48,7 @@ func AsAcc(acc pwallet.Account) Account {
 	return acc.(Account)
 }
 
-// IsAddr returns whether n perun Address is an Address.
+// IsAddr returns whether a Perun Address has the expected Address type.
 func IsAddr(acc pwallet.Address) bool {
 	_, ok := acc.(Address)
 	return ok

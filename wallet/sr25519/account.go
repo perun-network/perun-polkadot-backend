@@ -50,7 +50,7 @@ func (acc *Account) SignData(data []byte) ([]byte, error) {
 	return acc.wallet.signData(acc.addr, data)
 }
 
-// IsAcc returns whether an perun Account is an Account.
+// IsAcc returns whether a Perun Account has the expected Account type.
 func IsAcc(acc pwallet.Account) bool {
 	_, ok := acc.(*Account)
 	return ok

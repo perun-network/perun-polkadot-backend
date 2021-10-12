@@ -91,7 +91,7 @@ func (a *Address) Cmp(b pwallet.Address) int {
 	return bytes.Compare(a.Bytes(), AsAddr(b).Bytes())
 }
 
-// IsAddr returns whether n perun Address is an Address.
+// IsAddr returns whether a Perun Address has the expected Address type.
 func IsAddr(addr pwallet.Address) bool {
 	_, ok := addr.(*Address)
 	return ok
