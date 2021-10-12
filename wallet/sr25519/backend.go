@@ -58,11 +58,11 @@ func (*Backend) DecodeSig(r io.Reader) (pwallet.Sig, error) {
 
 // VerifySignature verifies that the signature was created by the address
 // on the passed data. Panics on wrong address type.
-func (*Backend) VerifySignature(msg []byte, _s pwallet.Sig, a pwallet.Address) (bool, error) {
-	var s signature
-	copy(s[:], _s)
+func (*Backend) VerifySignature(msg []byte, s pwallet.Sig, a pwallet.Address) (bool, error) {
+	var _s signature
+	copy(_s[:], s)
 	sig := new(schnorrkel.Signature)
-	if err := sig.Decode(s); err != nil {
+	if err := sig.Decode(_s); err != nil {
 		return false, err
 	}
 	context := schnorrkel.NewSigningContext(SignaturePrefix, msg)

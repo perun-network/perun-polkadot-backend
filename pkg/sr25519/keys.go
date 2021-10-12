@@ -22,11 +22,11 @@ import (
 )
 
 // NewPK decodes a public key from the passed byte slice.
-func NewPK(_data []byte) (*schnorrkel.PublicKey, error) {
-	var data [32]byte
-	copy(data[:], _data)
+func NewPK(data []byte) (*schnorrkel.PublicKey, error) {
+	var _data [32]byte
+	copy(_data[:], data)
 	pk := new(schnorrkel.PublicKey)
-	return pk, pk.Decode(data)
+	return pk, pk.Decode(_data)
 }
 
 // NewPKFromHex returns a public key by decoding a hex string.
@@ -49,10 +49,10 @@ func NewPKFromRng(rng io.Reader) (*schnorrkel.PublicKey, error) {
 }
 
 // NewSK decodes a secret key from the passed byte slice.
-func NewSK(_data []byte) (*schnorrkel.MiniSecretKey, error) {
-	var data [32]byte
-	copy(data[:], _data)
-	return schnorrkel.NewMiniSecretKeyFromRaw(data)
+func NewSK(data []byte) (*schnorrkel.MiniSecretKey, error) {
+	var _data [32]byte
+	copy(_data[:], data)
+	return schnorrkel.NewMiniSecretKeyFromRaw(_data)
 }
 
 // NewSKFromHex returns a secret key by decoding a hex string.
