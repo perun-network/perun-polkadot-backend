@@ -24,8 +24,7 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
 )
 
-// TestWallet_Verify tests that a constant signature that was generated at
-// polkadot.js.org can be verified.
+// TestWallet_Verify tests that a fixed signature can be verified.
 func TestWallet_Verify(t *testing.T) {
 	for _, setup := range test.LoadDevAccounts(t, "../../") {
 		backend := new(sr25519.Backend)

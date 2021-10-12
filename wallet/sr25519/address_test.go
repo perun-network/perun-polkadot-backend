@@ -26,8 +26,8 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
 )
 
-// TestAddress_SS58Addr tests that the SS58 address calculation returns the same
-// result as polkadot.js.org.
+// TestAddress_SS58Addr tests that the SS58 address calculation returns
+// fixed values.
 func TestAddress_SS58Addr(t *testing.T) {
 	for _, setup := range test.LoadDevAccounts(t, "../../") {
 		// Check AccountId
