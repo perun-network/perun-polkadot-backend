@@ -6,6 +6,7 @@
 
 <p align="center">
   <a href="https://www.apache.org/licenses/LICENSE-2.0.txt"><img src="https://img.shields.io/badge/license-Apache%202-blue" alt="License: Apache 2.0"></a>
+  <a href="https://github.com/perun-network/perun-polkadot-backend/actions/workflows/rust.yml"><img src="https://github.com/perun-network/perun-polkadot-backend/actions/workflows/go.yml/badge.svg?branch=main" alt="CI status"></a>
 </p>
 
 This project implements a [Substrate] backend for our [go-perun] framework. 
