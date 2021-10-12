@@ -22,14 +22,14 @@ import (
 )
 
 type (
-	// Account defines a perun Account with substrate specific functions.
+	// Account defines a Perun Account with substrate specific functions.
 	Account interface {
 		pwallet.Account
 
 		substrate.ExtSigner
 	}
 
-	// Address defines a perun Address with substrate specific functions.
+	// Address defines a Perun Address with substrate specific functions.
 	Address interface {
 		pwallet.Address
 
@@ -43,7 +43,7 @@ func IsAcc(acc pwallet.Account) bool {
 	return ok
 }
 
-// AsAcc returns a perun Account as Account. Panics if the conversion failed.
+// AsAcc returns a Perun Account as Account. Panics if the conversion failed.
 func AsAcc(acc pwallet.Account) Account {
 	return acc.(Account)
 }
@@ -54,7 +54,7 @@ func IsAddr(acc pwallet.Address) bool {
 	return ok
 }
 
-// AsAddr returns a perun Address as Address. Panics if the conversion failed.
+// AsAddr returns a Perun Address as Address. Panics if the conversion failed.
 func AsAddr(acc pwallet.Address) Address {
 	return acc.(Address)
 }

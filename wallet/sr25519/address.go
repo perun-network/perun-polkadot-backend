@@ -44,12 +44,12 @@ func (a *Address) Bytes() []byte {
 	return b[:]
 }
 
-// Encode encodes an Address. Needed by the perun Address interface.
+// Encode encodes an Address. Needed by the Perun Address interface.
 func (a *Address) Encode(w io.Writer) error {
 	return pkgio.Encode(w, a.pk.Encode())
 }
 
-// Decode decodes an Address. Needed by the perun Address interface.
+// Decode decodes an Address. Needed by the Perun Address interface.
 func (a *Address) Decode(r io.Reader) error {
 	var pk [AddressLen]byte
 	if _, err := io.ReadFull(r, pk[:]); err != nil {
@@ -65,20 +65,20 @@ func (a *Address) AccountId() types.AccountID {
 }
 
 // String returns the AccountId as hex string with 0x prefix.
-// Needed by the perun Address interface.
+// Needed by the Perun Address interface.
 func (a *Address) String() string {
 	aid := a.AccountId()
 	return hexutil.Encode(aid[:])
 }
 
-// key returns the address encoded as perun wallet AddrKey.
+// key returns the address encoded as Perun wallet AddrKey.
 func (a *Address) key() pwallet.AddrKey {
 	return pwallet.AddrKey(a.Bytes())
 }
 
 // Equals returns whether the passed address is equal to the receiver.
 // Panics if the passed address is not of type Address.
-// Needed by the perun Address interface.
+// Needed by the Perun Address interface.
 func (a *Address) Equals(b pwallet.Address) bool {
 	return bytes.Equal(a.Bytes(), AsAddr(b).Bytes())
 }
@@ -86,7 +86,7 @@ func (a *Address) Equals(b pwallet.Address) bool {
 // Cmp returns 0 if a == b, -1 if a < b, and +1 if a > b.
 // Where ==, < and > are an arbitrary but fixed total order over Address.
 // Panics if the passed address is not of type Address.
-// Needed by the perun Address interface.
+// Needed by the Perun Address interface.
 func (a *Address) Cmp(b pwallet.Address) int {
 	return bytes.Compare(a.Bytes(), AsAddr(b).Bytes())
 }
@@ -97,7 +97,7 @@ func IsAddr(addr pwallet.Address) bool {
 	return ok
 }
 
-// AsAddr returns a perun Address as Address. Panics if the conversion failed.
+// AsAddr returns a Perun Address as Address. Panics if the conversion failed.
 func AsAddr(addr pwallet.Address) *Address {
 	return addr.(*Address)
 }

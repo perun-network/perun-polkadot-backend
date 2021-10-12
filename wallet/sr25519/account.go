@@ -56,7 +56,7 @@ func IsAcc(acc pwallet.Account) bool {
 	return ok
 }
 
-// AsAcc returns a perun Account as Account. Panics if the conversion failed.
+// AsAcc returns a Perun Account as Account. Panics if the conversion failed.
 func AsAcc(acc pwallet.Account) *Account {
 	return acc.(*Account)
 }

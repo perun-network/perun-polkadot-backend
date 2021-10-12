@@ -33,7 +33,7 @@ type Wallet struct {
 }
 
 var (
-	// ErrWrongAddrType is returned when the type of a perun Address was not
+	// ErrWrongAddrType is returned when the type of a Perun Address was not
 	// of type Address.
 	ErrWrongAddrType = errors.New("got wrong address type")
 	// ErrAccountNotPresent is returned when no Account could be found for a
@@ -60,7 +60,7 @@ func (w *Wallet) ImportSK(sk *schnorrkel.MiniSecretKey) *Account {
 	return newAccount(w, keyPair.pk)
 }
 
-// Unlock unlocks an Account. Needed by the perun Wallet interface.
+// Unlock unlocks an Account. Needed by the Perun Wallet interface.
 // Returns ErrWrongAddrType or ErrAccountNotPresent in case of an error.
 func (w *Wallet) Unlock(pAddr pwallet.Address) (pwallet.Account, error) {
 	w.mtx.RLock()
@@ -115,11 +115,11 @@ func (w *Wallet) signData(addr *Address, data []byte) ([]byte, error) {
 	return sig[:], nil
 }
 
-// LockAll does nothing. Needed by the perun Wallet interface.
+// LockAll does nothing. Needed by the Perun Wallet interface.
 func (*Wallet) LockAll() {}
 
-// IncrementUsage does nothing. Needed by the perun Wallet interface.
+// IncrementUsage does nothing. Needed by the Perun Wallet interface.
 func (*Wallet) IncrementUsage(pwallet.Address) {}
 
-// DecrementUsage does nothing. Needed by the perun Wallet interface.
+// DecrementUsage does nothing. Needed by the Perun Wallet interface.
 func (*Wallet) DecrementUsage(pwallet.Address) {}
