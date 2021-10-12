@@ -39,11 +39,11 @@ func TestWallet_GenericSignatureSizeTest(t *testing.T) {
 func newSetup(t require.TestingT, rng *rand.Rand) *ptest.Setup {
 	w := wallet.NewWallet()
 
-	sk1, err := pkgsr25519.NewSkFromRng(rng)
+	sk1, err := pkgsr25519.NewSKFromRng(rng)
 	require.NoError(t, err)
 	acc1 := w.ImportSK(sk1)
 
-	sk2, err := pkgsr25519.NewSkFromRng(rng)
+	sk2, err := pkgsr25519.NewSKFromRng(rng)
 	require.NoError(t, err)
 	acc2 := w.ImportSK(sk2)
 
@@ -51,11 +51,11 @@ func newSetup(t require.TestingT, rng *rand.Rand) *ptest.Setup {
 	_, err = rng.Read(data)
 	require.NoError(t, err)
 
-	zeroPk, _ := pkgsr25519.NewPk([]byte{})
+	zeroPK, _ := pkgsr25519.NewPK([]byte{})
 
 	return &ptest.Setup{
 		AddressInWallet: acc1.Address(),
-		ZeroAddress:     wallet.NewAddressFromPk(zeroPk),
+		ZeroAddress:     wallet.NewAddressFromPK(zeroPK),
 		Backend:         new(wallet.Backend),
 		Wallet:          w,
 		AddressEncoded:  acc2.Address().Bytes(),

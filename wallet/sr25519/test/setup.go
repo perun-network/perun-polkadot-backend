@@ -71,7 +71,7 @@ func LoadDevAccounts(t *testing.T, dir string) []*DevAccount {
 	require.NoError(t, err)
 	wallet := sr25519.NewWallet()
 	for _, setup := range setups {
-		sk, err := pkgsr25519.NewSk(setup.Seed)
+		sk, err := pkgsr25519.NewSK(setup.Seed)
 		require.NoError(t, err)
 		setup.Acc = wallet.ImportSK(sk)
 	}

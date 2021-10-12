@@ -37,7 +37,7 @@ func NewWallet() *Wallet {
 // NewRandomAccount samples a random account from the passed entropy source.
 // Imports the account into the wallet and returns it.
 func (w *Wallet) NewRandomAccount(rng *rand.Rand) pwallet.Account {
-	sk, err := pkgsr25519.NewSkFromRng(rng)
+	sk, err := pkgsr25519.NewSKFromRng(rng)
 	if err != nil {
 		panic(err)
 	}
@@ -47,11 +47,11 @@ func (w *Wallet) NewRandomAccount(rng *rand.Rand) pwallet.Account {
 // NewAddressZero returns a zero address that is strictly smaller than all
 // other addresses.
 func NewAddressZero() *sr25519.Address {
-	return sr25519.NewAddressFromPk(ZeroPk())
+	return sr25519.NewAddressFromPK(ZeroPK())
 }
 
-// ZeroPk returns a PK that can be used to create a zero address.
-func ZeroPk() *schnorrkel.PublicKey {
-	zero, _ := pkgsr25519.NewPk([]byte{})
+// ZeroPK returns a PK that can be used to create a zero address.
+func ZeroPK() *schnorrkel.PublicKey {
+	zero, _ := pkgsr25519.NewPK([]byte{})
 	return zero
 }

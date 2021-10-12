@@ -21,55 +21,55 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
-// NewPk decodes a public key from the passed byte slice.
-func NewPk(_data []byte) (*schnorrkel.PublicKey, error) {
+// NewPK decodes a public key from the passed byte slice.
+func NewPK(_data []byte) (*schnorrkel.PublicKey, error) {
 	var data [32]byte
 	copy(data[:], _data)
 	pk := new(schnorrkel.PublicKey)
 	return pk, pk.Decode(data)
 }
 
-// NewPkFromHex returns a public key by decoding a hex string.
+// NewPKFromHex returns a public key by decoding a hex string.
 // Accepts hex strings with and without 0x.
-func NewPkFromHex(hex string) (*schnorrkel.PublicKey, error) {
+func NewPKFromHex(hex string) (*schnorrkel.PublicKey, error) {
 	data, err := hexutil.Decode(hex)
 	if err != nil {
 		return nil, err
 	}
-	return NewPk(data)
+	return NewPK(data)
 }
 
-// NewPkFromRng returns a new public key by readind data from rng.
-func NewPkFromRng(rng io.Reader) (*schnorrkel.PublicKey, error) {
-	sk, err := NewSkFromRng(rng)
+// NewPKFromRng returns a new public key by readind data from rng.
+func NewPKFromRng(rng io.Reader) (*schnorrkel.PublicKey, error) {
+	sk, err := NewSKFromRng(rng)
 	if err != nil {
 		return nil, err
 	}
 	return sk.Public(), nil
 }
 
-// NewSk decodes a secret key from the passed byte slice.
-func NewSk(_data []byte) (*schnorrkel.MiniSecretKey, error) {
+// NewSK decodes a secret key from the passed byte slice.
+func NewSK(_data []byte) (*schnorrkel.MiniSecretKey, error) {
 	var data [32]byte
 	copy(data[:], _data)
 	return schnorrkel.NewMiniSecretKeyFromRaw(data)
 }
 
-// NewSkFromHex returns a secret key by decoding a hex string.
+// NewSKFromHex returns a secret key by decoding a hex string.
 // Accepts hex strings with and without 0x.
-func NewSkFromHex(hex string) (*schnorrkel.MiniSecretKey, error) {
+func NewSKFromHex(hex string) (*schnorrkel.MiniSecretKey, error) {
 	data, err := hexutil.Decode(hex)
 	if err != nil {
 		return nil, err
 	}
-	return NewSk(data)
+	return NewSK(data)
 }
 
-// NewSkFromRng returns a new secret key by readind data from rng.
-func NewSkFromRng(rng io.Reader) (*schnorrkel.MiniSecretKey, error) {
+// NewSKFromRng returns a new secret key by readind data from rng.
+func NewSKFromRng(rng io.Reader) (*schnorrkel.MiniSecretKey, error) {
 	var data [32]byte
 	if _, err := rng.Read(data[:]); err != nil {
 		return nil, err
 	}
-	return NewSk(data[:])
+	return NewSK(data[:])
 }

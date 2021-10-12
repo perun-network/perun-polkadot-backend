@@ -36,11 +36,11 @@ func NewRandomizer() *Randomizer {
 
 // NewRandomAddress samples a random address from the passed entropy source.
 func (*Randomizer) NewRandomAddress(rng *rand.Rand) pwallet.Address {
-	pk, err := pkgsr25519.NewPkFromRng(rng)
+	pk, err := pkgsr25519.NewPKFromRng(rng)
 	if err != nil {
 		panic(err)
 	}
-	return sr25519.NewAddressFromPk(pk)
+	return sr25519.NewAddressFromPK(pk)
 }
 
 // RandomWallet returns the random wallet of the Randomizer.

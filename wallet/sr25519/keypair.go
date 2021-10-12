@@ -34,7 +34,7 @@ type keyPair struct {
 
 // makeKeyPair returns a new keyPair.
 func makeKeyPair(msk *schnorrkel.MiniSecretKey) keyPair {
-	return keyPair{msk, msk.ExpandEd25519(), NewAddressFromPk(msk.Public())}
+	return keyPair{msk, msk.ExpandEd25519(), NewAddressFromPK(msk.Public())}
 }
 
 // keyRing returns the receiver as gsrpc.KeyringPair.

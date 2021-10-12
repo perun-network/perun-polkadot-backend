@@ -33,8 +33,8 @@ type Address struct {
 // AddressLen is the length of an encoded Address in byte.
 const AddressLen = 32
 
-// NewAddressFromPk returns a new Address from a public key.
-func NewAddressFromPk(pk *schnorrkel.PublicKey) *Address {
+// NewAddressFromPK returns a new Address from a public key.
+func NewAddressFromPK(pk *schnorrkel.PublicKey) *Address {
 	return &Address{pk}
 }
 
