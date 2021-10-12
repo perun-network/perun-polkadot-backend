@@ -20,6 +20,8 @@ import (
 	"github.com/ChainSafe/go-schnorrkel"
 	pkgio "perun.network/go-perun/pkg/io"
 	pwallet "perun.network/go-perun/wallet"
+
+	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 )
 
 type (
@@ -32,11 +34,6 @@ type (
 const (
 	// SignatureLen is the constant length of a signature in byte.
 	SignatureLen = 64
-)
-
-var (
-	// SignaturePrefix is prepended to all messages before signing.
-	SignaturePrefix = []byte("substrate")
 )
 
 // DecodeAddress decodes an address from the reader.
@@ -65,6 +62,6 @@ func (*Backend) VerifySignature(msg []byte, s pwallet.Sig, a pwallet.Address) (b
 	if err := sig.Decode(_s); err != nil {
 		return false, err
 	}
-	context := schnorrkel.NewSigningContext(SignaturePrefix, msg)
+	context := schnorrkel.NewSigningContext(substrate.SignaturePrefix, msg)
 	return AsAddr(a).pk.Verify(sig, context), nil
 }

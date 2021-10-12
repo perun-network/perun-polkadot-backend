@@ -106,7 +106,7 @@ func (w *Wallet) signData(addr *Address, data []byte) ([]byte, error) {
 		return nil, ErrAccountNotPresent
 	}
 	// Prepend SignaturePrefix and sign.
-	env := schnorrkel.NewSigningContext(SignaturePrefix, data)
+	env := schnorrkel.NewSigningContext(substrate.SignaturePrefix, data)
 	_sig, err := kp.sk.Sign(env)
 	if err != nil {
 		return nil, err

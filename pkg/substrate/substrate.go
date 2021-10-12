@@ -54,6 +54,9 @@ type (
 	}
 )
 
+// SignaturePrefix is prepended by substrate to all messages before signing.
+var SignaturePrefix = []byte("substrate")
+
 // SS58Address returns the SS58 of an Address for a specific network.
 func SS58Address(addr gsrpc.AccountID, network NetworkId) (string, error) {
 	return subkey.SS58Address(addr[:], uint8(network))
