@@ -47,6 +47,7 @@ type (
 		Value   string
 		Network substrate.NetworkId
 	}
+	// Hex allows hexadecimal strings to be decoded by the go JSON lib.
 	Hex []byte
 )
 
