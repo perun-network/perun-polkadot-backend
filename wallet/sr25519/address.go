@@ -21,7 +21,6 @@ import (
 	"github.com/ChainSafe/go-schnorrkel"
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	pkgio "perun.network/go-perun/pkg/io"
 	pwallet "perun.network/go-perun/wallet"
 )
 
@@ -46,8 +45,7 @@ func (a *Address) Bytes() []byte {
 
 // Encode encodes an Address. Needed by the Perun Address interface.
 func (a *Address) Encode(w io.Writer) error {
-	bytes := [AddressLen]byte(a.pk.Encode())
-	return pkgio.Encode(w, bytes)
+	return encodeAddress(a, w)
 }
 
 // Decode decodes an Address. Needed by the Perun Address interface.

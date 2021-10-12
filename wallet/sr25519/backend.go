@@ -36,10 +36,21 @@ const (
 	SignatureLen = 64
 )
 
+// encodeAddress encodes an address into the writer.
+func encodeAddress(a *Address, w io.Writer) error {
+	return pkgio.Encode(w, a.Bytes())
+}
+
 // DecodeAddress decodes an address from the reader.
 func (*Backend) DecodeAddress(r io.Reader) (pwallet.Address, error) {
 	addr := new(Address)
 	return addr, addr.Decode(r)
+}
+
+// encodeSig encodes a signature into byte slice.
+func encodeSig(s *schnorrkel.Signature) []byte {
+	bytes := signature(s.Encode()) // assert the length
+	return bytes[:]
 }
 
 // DecodeSig decodes a signature from the reader.

@@ -111,8 +111,7 @@ func (w *Wallet) signData(addr *Address, data []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	sig := signature(_sig.Encode())
-	return sig[:], nil
+	return encodeSig(_sig), nil
 }
 
 // LockAll does nothing. Needed by the Perun Wallet interface.
