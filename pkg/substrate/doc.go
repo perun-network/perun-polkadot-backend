@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// package substrate provides reusable functions for interacting with a
+// Package substrate provides reusable functions for interacting with a
 // substrate node.
 package substrate // import "github.com/perun-network/perun-polkadot-backend/pkg/substrate"

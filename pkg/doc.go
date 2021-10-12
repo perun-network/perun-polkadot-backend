@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// package pkg implements helpers for 3rd party libraries.
+// Package pkg implements helpers for 3rd party libraries.
 package pkg // import "github.com/perun-network/perun-polkadot-backend/pkg"
