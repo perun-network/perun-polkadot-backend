@@ -26,11 +26,6 @@ import (
 	wallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 )
 
-func TestWallet_Generic(t *testing.T) {
-	s := newSetup(t, pkgtest.Prng(t))
-	ptest.TestAccountWithWalletAndBackend(t, s)
-}
-
 func TestWallet_GenericSignatureSizeTest(t *testing.T) {
 	s := newSetup(t, pkgtest.Prng(t))
 	ptest.GenericSignatureSizeTest(t, s)

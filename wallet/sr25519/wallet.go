@@ -26,7 +26,7 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 )
 
-// Wallet implements the Wallet interface. It uses sr25519 cryptography.
+// Wallet implements the Perun Wallet interface. It uses sr25519 cryptography.
 type Wallet struct {
 	mtx     *sync.RWMutex               // protects all
 	keyRing map[pwallet.AddrKey]keyPair // address -> keyPair
@@ -36,7 +36,7 @@ var (
 	// ErrWrongAddrType is returned when the type of a Perun Address was not
 	// of type Address.
 	ErrWrongAddrType = errors.New("got wrong address type")
-	// ErrAccountNotPresent is returned when no Account could be found for a
+	// ErrAccountNotPresent is returned when no Account could be found for
 	// a specific Address.
 	ErrAccountNotPresent = errors.New("account is not present in the wallet")
 )
@@ -77,7 +77,7 @@ func (w *Wallet) Unlock(pAddr pwallet.Address) (pwallet.Account, error) {
 	return newAccount(w, addr), nil
 }
 
-// SignTx signs Extrinsics for an address that is present in the wallet;
+// SignTx signs an Extrinsic for an address that is present in the wallet;
 // otherwise returns ErrAccountNotPresent.
 func (w *Wallet) signExt(addr *Address, tx *types.Extrinsic, opts types.SignatureOptions, netId substrate.NetworkId) error {
 	w.mtx.RLock()

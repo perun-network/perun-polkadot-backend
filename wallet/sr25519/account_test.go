@@ -19,6 +19,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	pkgtest "perun.network/go-perun/pkg/test"
+	ptest "perun.network/go-perun/wallet/test"
 
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
@@ -32,4 +34,9 @@ func TestWallet_Verify(t *testing.T) {
 		require.NoError(t, err)
 		assert.True(t, ok)
 	}
+}
+
+func TestAccountWithWalletAndBackend(t *testing.T) {
+	s := newSetup(t, pkgtest.Prng(t))
+	ptest.TestAccountWithWalletAndBackend(t, s)
 }
