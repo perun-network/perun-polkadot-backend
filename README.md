@@ -22,7 +22,7 @@ It enables *go-perun* applications to create state-channels on [Polkadot] by con
 * `cmd/` console commands for debugging
   * `balance_events/` logs balance changes for dev accounts
   * `system_events/` logs important system events
-* `chain.json + accounts.json` configuration for testing
+* `wallet/sr25519/test/accounts.json` config for testing
 
 ## Development Setup
 If you want to locally develop with this project:

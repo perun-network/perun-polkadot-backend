@@ -28,7 +28,7 @@ import (
 
 // TestWallet_Verify tests that a fixed signature can be verified.
 func TestWallet_Verify(t *testing.T) {
-	for _, setup := range test.LoadDevAccounts(t, "../../") {
+	for _, setup := range test.LoadDevAccounts(t) {
 		backend := new(sr25519.Backend)
 		ok, err := backend.VerifySignature(setup.Msg, setup.Sig, setup.Acc.Address())
 		require.NoError(t, err)

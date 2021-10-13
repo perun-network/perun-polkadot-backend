@@ -15,9 +15,8 @@
 package test
 
 import (
+	_ "embed"
 	"encoding/json"
-	"io/ioutil"
-	"path"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -29,10 +28,8 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 )
 
-const (
-	// file is the path to the config file which contains the dev accounts.
-	file = "accounts.json"
-)
+//go:embed accounts.json
+var AccountsCfg []byte
 
 type (
 	// DevAccount contains an account for testing and developing which is
@@ -63,13 +60,11 @@ func (s *Hex) UnmarshalJSON(data []byte) error {
 
 // LoadDevAccounts loads all dev accounts by assuming that the config file is
 // in the passed directory.
-func LoadDevAccounts(t *testing.T, dir string) []*DevAccount {
-	data, err := ioutil.ReadFile(path.Join(dir, file))
+func LoadDevAccounts(t *testing.T) []*DevAccount {
+	var setups []*DevAccount
+	err := json.Unmarshal(AccountsCfg, &setups)
 	require.NoError(t, err)
 
-	var setups []*DevAccount
-	err = json.Unmarshal(data, &setups)
-	require.NoError(t, err)
 	wallet := sr25519.NewWallet()
 	for _, setup := range setups {
 		sk, err := pkgsr25519.NewSK(setup.Seed)
