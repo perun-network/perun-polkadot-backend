@@ -13,4 +13,4 @@
 // limitations under the License.
 
 // Package wallet implements the go-perun Wallet interface for substrate.
-package wallet // import "github.com/perun-network/perun-polkadot-backend/wallet"
+package wallet

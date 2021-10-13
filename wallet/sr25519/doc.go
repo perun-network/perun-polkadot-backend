@@ -14,4 +14,4 @@
 
 // Package sr25519 implements go-perun's wallet interface for the polkadot
 // backend.
-package sr25519 // import "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
+package sr25519

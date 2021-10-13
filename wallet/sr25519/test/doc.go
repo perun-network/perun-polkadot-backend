@@ -13,4 +13,4 @@
 // limitations under the License.
 
 // Package test provides helper functions and setup for testing the sr25519 wallet.
-package test // import "github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
+package test

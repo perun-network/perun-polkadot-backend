@@ -13,4 +13,4 @@
 // limitations under the License.
 
 // Package sr25519 provides helper functions for the go-schnorrkel library.
-package sr25519 // import "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
+package sr25519

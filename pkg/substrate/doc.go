@@ -14,4 +14,4 @@
 
 // Package substrate provides reusable functions for interacting with a
 // substrate node.
-package substrate // import "github.com/perun-network/perun-polkadot-backend/pkg/substrate"
+package substrate
