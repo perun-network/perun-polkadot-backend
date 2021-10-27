@@ -21,19 +21,21 @@ import (
 )
 
 type (
-	// NetworkId id of the substrate chain.
-	NetworkId uint8
+	// NetworkID ID of the substrate chain.
+	NetworkID uint8
 
 	// ExtSigner signs an Extrinsic by modifying it.
 	ExtSigner interface {
 		// SignExt signs the extrinsic with the specified options and network.
-		SignExt(*gsrpc.Extrinsic, gsrpc.SignatureOptions, NetworkId) error
+		SignExt(*gsrpc.Extrinsic, gsrpc.SignatureOptions, NetworkID) error
 	}
 
 	// StorageQueryer can be used to query the on-chain state.
 	StorageQueryer interface {
-		// QueryOne queries the given keys and returns one result.
-		// Errors if more than one or no result was found.
+		// QueryOne queries the storage and expects to read at least one value.
+		// PastBlocks defines how many blocks into the past the query should look.
+		// Returns the latest value that it read or an error if none was found
+		// within the last `pastBlocks` blocks.
 		QueryOne(pastBlocks gsrpc.BlockNumber, keys ...gsrpc.StorageKey) (*gsrpc.KeyValueOption, error)
 
 		// Subscribe subscribes to the changes of a storage key.
@@ -58,6 +60,16 @@ type (
 var SignaturePrefix = []byte("substrate")
 
 // SS58Address returns the SS58 of an Address for a specific network.
-func SS58Address(addr gsrpc.AccountID, network NetworkId) (string, error) {
+func SS58Address(addr gsrpc.AccountID, network NetworkID) (string, error) {
 	return subkey.SS58Address(addr[:], uint8(network))
+}
+
+// Meta returns the expected metadata and a success bool.
+// Can be used to check whether the connected substrate node
+// is running the right version.
+func Meta(meta *gsrpc.Metadata) (*gsrpc.MetadataV13, bool) {
+	if !meta.IsMetadataV13 {
+		return nil, false
+	}
+	return &meta.AsMetadataV13, true
 }

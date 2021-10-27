@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
-package test
+// Package pallet implements functions to interact with a Perun pallet.
+package pallet

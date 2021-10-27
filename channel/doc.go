@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
-package test
+// Package channel contains the Polkadot channel backend implementation.
+package channel

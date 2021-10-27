@@ -12,5 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
 package test
+
+import (
+	"context"
+
+	pkgerrors "perun.network/go-perun/pkg/errors"
+
+	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
+)
+
+// DepositAll executes all requests with the given depositors in parallel.
+func DepositAll(ctx context.Context, deps []*pallet.Depositor, reqs []*pallet.DepositReq) error {
+	g := pkgerrors.NewGatherer()
+	for i := range deps {
+		i := i
+		g.Go(func() error {
+			return deps[i].Deposit(ctx, reqs[i])
+		})
+	}
+
+	if g.WaitDoneOrFailedCtx(ctx) {
+		return ctx.Err()
+	}
+	return g.Err()
+}

@@ -12,5 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
 package test
+
+import (
+	pchtest "perun.network/go-perun/channel/test"
+)
+
+func init() {
+	pchtest.SetRandomizer(new(randomizer))
+}

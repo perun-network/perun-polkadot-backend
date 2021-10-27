@@ -12,5 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
-package test
+package client_test
+
+import (
+	"github.com/sirupsen/logrus"
+
+	plogrus "perun.network/go-perun/log/logrus"
+)
+
+func init() {
+	plogrus.Set(logrus.TraceLevel, &logrus.TextFormatter{ForceColors: true})
+}

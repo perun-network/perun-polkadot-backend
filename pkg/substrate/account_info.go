@@ -12,5 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
-package test
+package substrate
+
+import "github.com/centrifuge/go-substrate-rpc-client/v3/types"
+
+// AccountInfo replaces substrate.AccountInfo since it is outdated.
+// This is advised by the GSRPC team.
+type AccountInfo struct {
+	Nonce       types.U32
+	Consumers   types.U32
+	Providers   types.U32
+	Sufficients types.U32
+
+	Free       types.U128
+	Reserved   types.U128
+	MiscFrozen types.U128
+	FreeFrozen types.U128
+}

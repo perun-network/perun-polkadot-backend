@@ -12,5 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package test provides helper and setup functions to test the sr25519 wallet.
 package test
+
+import (
+	"context"
+
+	pchannel "perun.network/go-perun/channel"
+	pkgerrors "perun.network/go-perun/pkg/errors"
+
+	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
+)
+
+// FundAll executes all requests with the given funders in parallel.
+func FundAll(ctx context.Context, funders []*pallet.Funder, reqs []*pchannel.FundingReq) error {
+	g := pkgerrors.NewGatherer()
+	for i := range funders {
+		i := i
+		g.Go(func() error {
+			return funders[i].Fund(ctx, *reqs[i])
+		})
+	}
+
+	if g.WaitDoneOrFailedCtx(ctx) {
+		return ctx.Err()
+	}
+	return g.Err()
+}
