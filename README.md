@@ -30,7 +30,10 @@ git clone https://github.com/perun-network/perun-polkadot-backend
 cd perun-polkadot-backend
 ```
 
-2. Start a local substrate chain by following the instructions in our [polkadot node] repo.
+2. Start a local substrate chain by following the instructions in our [polkadot node] repo, or by using our precompiled docker image:
+```sh
+docker run --rm -p9944:9944 perunnetwork/polkadot-test-node
+```
 
 3. Run all tests:  
 ```sh
