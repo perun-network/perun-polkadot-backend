@@ -68,7 +68,7 @@ Use of the source code is governed by the Apache 2.0 license that can be found i
 [Perun Pallet]: https://github.com/perun-network/perun-polkadot-pallet
 [frontend template]: https://github.com/substrate-developer-hub/substrate-front-end-template
 [demo CLI node]: https://github.com/perun-network/perun-polkadot-demo
-[polkadot node]: https://github.com/perun-network/perun-polkadot-node#usage
+[polkadot node]: https://github.com/perun-network/perun-polkadot-node#docker-images
 
 [Open Grant]: https://github.com/perun-network/Open-Grants-Program/blob/master/applications/perun_channels.md#w3f-open-grant-proposal
 [Web3 Foundation]: https://web3.foundation/about/
