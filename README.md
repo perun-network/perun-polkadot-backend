@@ -32,13 +32,18 @@ cd perun-polkadot-backend
 
 2. Start a local substrate chain by following the instructions in our [polkadot node] repo.
 
-3. Run all tests:  
+3. Run the tests.  
+
+- You can run the tests either **directly** or in Docker. The direct invocation looks like this:
 ```sh
 go test -p 1 ./...
 ```
-This can take while but should eventually finish successfully. The long testing time results from the block-time of the node, which is set to one second.  
-The `-p 1` flag is important, since the tests otherwise are started in parallel and mess up
-the account nonce.
+- To run the tests in **Docker**:  
+```sh
+docker-compose up --force-recreate --remove-orphans --abort-on-container-exit --exit-code-from backend
+```
+
+The tests take a while but should eventually finish successfully. The long testing time results from the block-time of the node. The `-p 1` flag is important, since the tests otherwise are started in parallel and mess up the account nonce.  
 
 ## Demo
 
