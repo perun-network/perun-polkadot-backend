@@ -1,0 +1,22 @@
+version: "3.2"
+
+services:
+  backend:
+    image: golang:1.17.3-bullseye
+    working_dir: /go/src/app
+    # Running the go tests with the `-p 1` flag is important, since the
+    # tests otherwise are started in parallel and mess up the account nonce.
+    command: go test -p 1 ./...
+    environment:
+      - RPC_URL=ws://node:9944
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - node
+
+  node:
+    image: perunnetwork/polkadot-test-node
+    logging:
+      driver: none
+    expose:
+      - 9944
