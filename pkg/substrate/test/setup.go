@@ -20,6 +20,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/centrifuge/go-substrate-rpc-client/v3/config"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"github.com/stretchr/testify/require"
 )
@@ -63,5 +64,8 @@ func LoadChainCfg(t *testing.T) ChainCfg {
 	var cfg ChainCfg
 	require.NoError(t, json.Unmarshal(chainCfgFile, &cfg))
 	cfg.BlockTime = time.Duration(cfg.BlockTimeMs) * time.Millisecond
+	if cfg.ChainUrl == "" {
+		cfg.ChainUrl = config.Default().RPCURL
+	}
 	return cfg
 }
