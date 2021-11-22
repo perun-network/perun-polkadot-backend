@@ -33,6 +33,7 @@ cd perun-polkadot-backend
 2. Start a local substrate chain by following the instructions in our [polkadot node] repo.
 
 3. Run the tests.  
+This step needs a working [Go distribution](https://golang.org), see [go.mod](go.mod) for the required version.
 
 - You can run the tests either **directly** or in Docker. The direct invocation looks like this:
 ```sh
