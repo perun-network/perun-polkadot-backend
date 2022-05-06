@@ -30,21 +30,19 @@ git clone https://github.com/perun-network/perun-polkadot-backend
 cd perun-polkadot-backend
 ```
 
-2. Start a local substrate chain by following the instructions in our [polkadot node] repo.
+2. Start a local Substrate node with the Perun Pallet installed. See the [polkadot node] repository for more details.
 
-3. Run the tests.  
-This step needs a working [Go distribution](https://golang.org), see [go.mod](go.mod) for the required version.
+```sh
+docker run --rm -p 9944:9944 perunnetwork/polkadot-test-node
+```
 
-- You can run the tests either **directly** or in Docker. The direct invocation looks like this:
+3. Run the tests. This step needs a working [Go distribution](https://golang.org), see [go.mod](go.mod) for the required version.
+
 ```sh
 go test -p 1 ./...
 ```
-- To run the tests in **Docker**:  
-```sh
-docker-compose up --force-recreate --remove-orphans --abort-on-container-exit --exit-code-from backend
-```
 
-The tests take a while but should eventually finish successfully. The long testing time results from the block-time of the node. The `-p 1` flag is important, since the tests otherwise are started in parallel and mess up the account nonce.  
+The tests take a while but should eventually finish successfully. The long testing time results from the block-time of the node. The `-p 1` flag is important, since the tests otherwise are started in parallel and mess up the account nonce.
 
 ## Demo
 
@@ -63,7 +61,7 @@ The authors take no responsibility for any loss of digital assets or other damag
 
 ## Copyright
 
-Copyright 2021 PolyCrypt GmbH.  
+Copyright 2022 PolyCrypt GmbH.  
 Use of the source code is governed by the Apache 2.0 license that can be found in the [LICENSE file](LICENSE).
 
 <!--- Links -->
