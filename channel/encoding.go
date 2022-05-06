@@ -15,6 +15,7 @@
 package channel
 
 import (
+	"log"
 	"math/big"
 	"time"
 
@@ -114,24 +115,39 @@ func NewState(s *pchannel.State) (*State, error) {
 	if err := s.Valid(); err != nil {
 		return nil, ErrStateIncompatible
 	}
-	bals, err := MakeAlloc(&s.Allocation)
 
+	bals, err := MakeAlloc(&s.Allocation)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := s.Data.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 	return &State{
 		Channel:  s.ID,
 		Version:  s.Version,
 		Balances: bals,
 		Final:    s.IsFinal,
+		Data:     data,
 	}, err
 }
 
 // NewPerunState creates a new Perun state and fills the App-Data with a
 // default value.
-func NewPerunState(s *State) *pchannel.State {
+func NewPerunState(s *State, app pchannel.App) *pchannel.State {
+	data := app.NewData()
+	if err := data.UnmarshalBinary(s.Data); err != nil {
+		log.Panicf("decoding app data: %v", err)
+	}
+
 	return &pchannel.State{
 		ID:         s.Channel,
 		Version:    s.Version,
+		App:        app,
 		Allocation: MakePerunAlloc(s.Balances),
-		Data:       pchannel.NoData(),
+		Data:       data,
 		IsFinal:    s.Final,
 	}
 }
@@ -174,11 +190,23 @@ func NewParams(p *pchannel.Params) (*Params, error) {
 		return nil, err
 	}
 	parts, err := MakeOffIdents(p.Parts)
+	if err != nil {
+		return nil, err
+	}
+
+	var appID OffIdentity
+	if !pchannel.IsNoApp(p.App) {
+		appID, err = MakeOffIdent(p.App.Def())
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &Params{
 		Nonce:             nonce,
 		Participants:      parts,
 		ChallengeDuration: MakeChallengeDuration(p.ChallengeDuration),
+		App:               appID,
 	}, err
 }
 
