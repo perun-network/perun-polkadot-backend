@@ -46,8 +46,8 @@ func TestHappyAliceBob(t *testing.T) {
 	)
 
 	setup := makeRoleSetups(s, name)
-	role[A] = clienttest.NewAlice(setup[A], t)
-	role[B] = clienttest.NewBob(setup[B], t)
+	role[A] = clienttest.NewAlice(t, setup[A])
+	role[B] = clienttest.NewBob(t, setup[B])
 
 	execConfig := &clienttest.AliceBobExecConfig{
 		BaseExecConfig: clienttest.MakeBaseExecConfig(

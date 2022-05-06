@@ -23,7 +23,7 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"
-	pkgsync "perun.network/go-perun/pkg/sync"
+	pkgsync "polycry.pt/poly-go/sync"
 )
 
 // AdjudicatorSub implements the AdjudicatorSubscription interface.
@@ -45,7 +45,7 @@ func NewAdjudicatorSub(cid channel.ChannelID, p *Pallet, storage substrate.Stora
 	if err != nil {
 		return nil, err
 	}
-	ret := &AdjudicatorSub{new(pkgsync.Closer), log.MakeEmbedding(log.Get()), cid, sub, p, storage, make(chan error, 1)}
+	ret := &AdjudicatorSub{new(pkgsync.Closer), log.MakeEmbedding(log.Default()), cid, sub, p, storage, make(chan error, 1)}
 	ret.OnCloseAlways(func() {
 		if err := ret.sub.Close(); err != nil {
 			ret.Log().WithError(err).Error("Could not close Closer.")

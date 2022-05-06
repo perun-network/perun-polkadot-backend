@@ -19,8 +19,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	pkgtest "perun.network/go-perun/pkg/test"
 	ptest "perun.network/go-perun/wallet/test"
+	pkgtest "polycry.pt/poly-go/test"
 
 	pkgsr25519 "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	wallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
@@ -48,12 +48,15 @@ func newSetup(t require.TestingT, rng *rand.Rand) *ptest.Setup {
 
 	zeroPK, _ := pkgsr25519.NewPK([]byte{})
 
+	acc2Marshalled, err := acc2.Address().MarshalBinary()
+	require.NoError(t, err)
+
 	return &ptest.Setup{
-		AddressInWallet: acc1.Address(),
-		ZeroAddress:     wallet.NewAddressFromPK(zeroPK),
-		Backend:         new(wallet.Backend),
-		Wallet:          w,
-		AddressEncoded:  acc2.Address().Bytes(),
-		DataToSign:      data,
+		AddressInWallet:   acc1.Address(),
+		ZeroAddress:       wallet.NewAddressFromPK(zeroPK),
+		Backend:           new(wallet.Backend),
+		Wallet:            w,
+		AddressMarshalled: acc2Marshalled,
+		DataToSign:        data,
 	}
 }

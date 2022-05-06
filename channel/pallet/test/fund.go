@@ -18,7 +18,7 @@ import (
 	"context"
 
 	pchannel "perun.network/go-perun/channel"
-	pkgerrors "perun.network/go-perun/pkg/errors"
+	pkgerrors "polycry.pt/poly-go/errors"
 
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
 )

@@ -16,7 +16,6 @@ package channel
 
 import (
 	"fmt"
-	"io"
 	"log"
 
 	eth "github.com/ethereum/go-ethereum/crypto"
@@ -63,9 +62,10 @@ func (*backend) Verify(addr pwallet.Address, state *pchannel.State, sig pwallet.
 	return pwallet.VerifySignature(data, sig, addr)
 }
 
-// DecodeAsset returns the unique asset of the backend. Cannot error.
-func (*backend) DecodeAsset(r io.Reader) (pchannel.Asset, error) {
-	return Asset, nil
+// NewAsset returns a variable of type Asset, which can be used
+// for unmarshalling an asset from its binary representation.
+func (*backend) NewAsset() pchannel.Asset {
+	return Asset
 }
 
 // CalcID calculates the channelID by encoding and hashing the params.

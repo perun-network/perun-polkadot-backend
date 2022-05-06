@@ -61,7 +61,7 @@ func (*ExpiredTimeout) Wait(context.Context) error {
 
 // NewTimeout returns a new Timeout which expires at the given time.
 func NewTimeout(storage StorageQueryer, when time.Time, pollInterval time.Duration) *Timeout {
-	return &Timeout{log.MakeEmbedding(log.Get()), when, pollInterval, storage}
+	return &Timeout{log.MakeEmbedding(log.Default()), when, pollInterval, storage}
 }
 
 // IsElapsed returns whether the timeout is elapsed.

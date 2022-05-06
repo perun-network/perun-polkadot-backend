@@ -36,7 +36,7 @@ type Funder struct {
 
 // NewFunder returns a new Funder.
 func NewFunder(pallet *Pallet, acc pwallet.Account, pastBlocks types.BlockNumber) *Funder {
-	return &Funder{log.MakeEmbedding(log.Get()), pallet, acc, pastBlocks}
+	return &Funder{log.MakeEmbedding(log.Default()), pallet, acc, pastBlocks}
 }
 
 // Fund funds a channel. Needed by the Funder interface.

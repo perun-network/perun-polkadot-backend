@@ -18,7 +18,7 @@ import (
 	"github.com/centrifuge/go-substrate-rpc-client/v3/rpc/state"
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"perun.network/go-perun/log"
-	pkgsync "perun.network/go-perun/pkg/sync"
+	pkgsync "polycry.pt/poly-go/sync"
 )
 
 type (
@@ -78,7 +78,7 @@ func NewEventSource(api *API, pastBlocks types.BlockNumber, keys ...*EventKey) (
 	events := make(chan types.EventRecordsRaw, ChanBuffSize)
 	source := &EventSource{
 		Closer:    new(pkgsync.Closer),
-		Embedding: log.MakeEmbedding(log.Get()),
+		Embedding: log.MakeEmbedding(log.Default()),
 		future:    future,
 		api:       api,
 		events:    events,

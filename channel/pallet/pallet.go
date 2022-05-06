@@ -58,7 +58,7 @@ var (
 
 // NewPallet returns a new Pallet.
 func NewPallet(pallet *substrate.Pallet, meta *types.Metadata) *Pallet {
-	return &Pallet{log.MakeEmbedding(log.Get()), pallet, meta}
+	return &Pallet{log.MakeEmbedding(log.Default()), pallet, meta}
 }
 
 // NewPerunPallet is a wrapper around NewPallet and returns a new Perun pallet.

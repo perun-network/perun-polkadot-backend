@@ -221,7 +221,10 @@ func MakeFundingReq(req *pchannel.FundingReq) (Funding, error) {
 // MakeOnIdent creates a new OnIdentity.
 func MakeOnIdent(addr pwallet.Address) (OnIdentity, error) {
 	var ret OnIdentity
-	data := addr.Bytes()
+	data, err := addr.MarshalBinary()
+	if err != nil {
+		return ret, err
+	}
 
 	if len(data) != OnIdentityLen {
 		return ret, ErrIdentLenMismatch
@@ -234,7 +237,10 @@ func MakeOnIdent(addr pwallet.Address) (OnIdentity, error) {
 // MakeOffIdent creates a new OffIdentity.
 func MakeOffIdent(part pwallet.Address) (OffIdentity, error) {
 	var ret OffIdentity
-	data := part.Bytes()
+	data, err := part.MarshalBinary()
+	if err != nil {
+		return ret, err
+	}
 
 	if len(data) != OffIdentityLen {
 		return ret, ErrIdentLenMismatch

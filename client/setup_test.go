@@ -20,12 +20,17 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
 	sr25519test "github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
 	clienttest "perun.network/go-perun/client/test"
+	"perun.network/go-perun/watcher/local"
 	"perun.network/go-perun/wire"
 )
 
 func makeRoleSetups(s *test.Setup, names [2]string) (setup [2]clienttest.RoleSetup) {
 	bus := wire.NewLocalBus()
 	for i := 0; i < len(setup); i++ {
+		watcher, err := local.NewWatcher(s.Adjs[i])
+		if err != nil {
+			panic(err)
+		}
 		setup[i] = clienttest.RoleSetup{
 			Name:              names[i],
 			Identity:          s.Accs[i].Acc,
@@ -35,6 +40,7 @@ func makeRoleSetups(s *test.Setup, names [2]string) (setup [2]clienttest.RoleSet
 			Wallet:            sr25519test.NewWallet(),
 			Timeout:           TestTimeoutBlocks * time.Second,
 			ChallengeDuration: 5, // 5 sec timeout
+			Watcher:           watcher,
 		}
 	}
 	return

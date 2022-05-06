@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"perun.network/go-perun/log"
-	ctxtest "perun.network/go-perun/pkg/context/test"
+	ctxtest "polycry.pt/poly-go/context/test"
 
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate/test"
