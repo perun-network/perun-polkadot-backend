@@ -114,13 +114,22 @@ func NewState(s *pchannel.State) (*State, error) {
 	if err := s.Valid(); err != nil {
 		return nil, ErrStateIncompatible
 	}
-	bals, err := MakeAlloc(&s.Allocation)
 
+	bals, err := MakeAlloc(&s.Allocation)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := s.Data.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 	return &State{
 		Channel:  s.ID,
 		Version:  s.Version,
 		Balances: bals,
 		Final:    s.IsFinal,
+		Data:     data,
 	}, err
 }
 
@@ -174,11 +183,19 @@ func NewParams(p *pchannel.Params) (*Params, error) {
 		return nil, err
 	}
 	parts, err := MakeOffIdents(p.Parts)
+	if err != nil {
+		return nil, err
+	}
 
+	appID, err := MakeOffIdent(p.App.Def())
+	if err != nil {
+		return nil, err
+	}
 	return &Params{
 		Nonce:             nonce,
 		Participants:      parts,
 		ChallengeDuration: MakeChallengeDuration(p.ChallengeDuration),
+		App:               appID,
 	}, err
 }
 

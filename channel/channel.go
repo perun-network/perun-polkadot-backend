@@ -55,6 +55,8 @@ type (
 	Balance = types.U128
 	// Sig is an off-chain signature.
 	Sig = [SigLen]byte
+	// AppID is the identifier of a channel application.
+	AppID uint64
 
 	// Params holds the fixed parameters of a channel and uniquely identifies it.
 	// This is a trimmed version of a go-perun channel.Params as app channels are
@@ -66,6 +68,8 @@ type (
 		Participants []OffIdentity
 		// ChallengeDuration is the duration that disputes can be refuted in.
 		ChallengeDuration ChallengeDuration
+		// App is the identifier of the channel application.
+		App OffIdentity
 	}
 
 	// State is the state of a channel.
@@ -80,6 +84,8 @@ type (
 		Balances []Balance
 		// Final whether or not this state is the final one.
 		Final bool
+		// Data is the channel's application data.
+		Data []byte
 	}
 
 	// Withdrawal is used by a participant to withdraw his on-chain funds.
