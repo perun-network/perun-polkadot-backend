@@ -49,6 +49,14 @@ type (
 		Topics []types.Hash // required
 	}
 
+	// ProgressedEvent is emitted when a channel state was progressed.
+	ProgressedEvent struct {
+		Phase   types.Phase // required
+		Cid     ChannelID
+		Version Version
+		Topics  []types.Hash // required
+	}
+
 	// ConcludedEvent is emitted when a channel is concluded.
 	ConcludedEvent struct {
 		Phase  types.Phase // required
@@ -75,6 +83,15 @@ func EventIsDeposited(e PerunEvent) bool {
 func EventIsDisputed(cid ChannelID) func(PerunEvent) bool {
 	return func(e PerunEvent) bool {
 		event, ok := e.(*DisputedEvent)
+		return ok && event.Cid == cid
+	}
+}
+
+// EventIsProgressed checks whether an event is a ProgressedEvent for a
+// specific channel.
+func EventIsProgressed(cid ChannelID) func(PerunEvent) bool {
+	return func(e PerunEvent) bool {
+		event, ok := e.(*ProgressedEvent)
 		return ok && event.Cid == cid
 	}
 }

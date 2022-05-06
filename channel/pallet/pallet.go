@@ -45,6 +45,8 @@ var (
 	Deposit = substrate.NewExtName(PerunPallet, "deposit")
 	// Dispute is the name of the dispute function of the pallet.
 	Dispute = substrate.NewExtName(PerunPallet, "dispute")
+	// Progress is the name of the progress function of the pallet.
+	Progress = substrate.NewExtName(PerunPallet, "progress")
 	// Conclude is the name of the conclude function of the pallet.
 	Conclude = substrate.NewExtName(PerunPallet, "conclude")
 	// Withdraw is the name of the withdraw function of the pallet.
@@ -153,6 +155,32 @@ func (p *Pallet) BuildDispute(acc pwallet.Account, params *pchannel.Params, stat
 			_params,
 			_state,
 			_sigs},
+		wallet.AsAddr(acc.Address()).AccountID(),
+		wallet.AsAcc(acc))
+}
+
+// BuildProgress returns an extrinsic that progresses a channel.
+func (p *Pallet) BuildProgress(acc pwallet.Account, params *pchannel.Params, next *pchannel.State, sig pwallet.Sig, signer pchannel.Index) (*types.Extrinsic, error) {
+	_params, err := channel.NewParams(params)
+	if err != nil {
+		return nil, err
+	}
+	_next, err := channel.NewState(next)
+	if err != nil {
+		return nil, err
+	}
+	_sig, err := channel.MakeSig(sig)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.BuildExt(Progress,
+		[]interface{}{
+			_params,
+			_next,
+			_sig,
+			signer,
+		},
 		wallet.AsAddr(acc.Address()).AccountID(),
 		wallet.AsAcc(acc))
 }
