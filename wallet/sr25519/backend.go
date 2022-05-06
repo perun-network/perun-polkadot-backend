@@ -36,15 +36,10 @@ const (
 	SignatureLen = 64
 )
 
-// encodeAddress encodes an address into the writer.
-func encodeAddress(a *Address, w io.Writer) error {
-	return pkgio.Encode(w, a.Bytes())
-}
-
-// DecodeAddress decodes an address from the reader.
-func (*Backend) DecodeAddress(r io.Reader) (pwallet.Address, error) {
-	addr := new(Address)
-	return addr, addr.Decode(r)
+// NewAddress returns a variable of type Address, which can be used
+// for unmarshalling an address from its binary representation.
+func (*Backend) NewAddress() pwallet.Address {
+	return &Address{}
 }
 
 // encodeSig encodes a signature into byte slice.

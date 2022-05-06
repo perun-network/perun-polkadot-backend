@@ -31,7 +31,7 @@ func TestRandomizer_RandomAddress(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 		addr2 := r.NewRandomAddress(rng)
-		require.False(t, addr.Equals(addr2))
+		require.False(t, addr.Equal(addr2))
 	}
 }
 
@@ -43,6 +43,6 @@ func TestRandomWallet_RandomAccount(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 		addr2 := r.NewRandomAccount(rng).Address()
-		require.False(t, addr.Equals(addr2))
+		require.False(t, addr.Equal(addr2))
 	}
 }

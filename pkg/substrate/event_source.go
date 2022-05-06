@@ -78,7 +78,7 @@ func NewEventSource(api *API, pastBlocks types.BlockNumber, keys ...*EventKey) (
 	events := make(chan types.EventRecordsRaw, ChanBuffSize)
 	source := &EventSource{
 		Closer:    new(pkgsync.Closer),
-		Embedding: log.MakeEmbedding(log.Get()),
+		Embedding: log.MakeEmbedding(log.Default()),
 		future:    future,
 		api:       api,
 		events:    events,

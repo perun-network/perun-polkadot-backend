@@ -46,7 +46,7 @@ var (
 
 // NewAdjudicator returns a new Adjudicator.
 func NewAdjudicator(onChain pwallet.Account, pallet *Pallet, storage substrate.StorageQueryer, pastBlocks types.BlockNumber) *Adjudicator {
-	return &Adjudicator{log.MakeEmbedding(log.Get()), pallet, storage, onChain, pastBlocks}
+	return &Adjudicator{log.MakeEmbedding(log.Default()), pallet, storage, onChain, pastBlocks}
 }
 
 // Register registers and disputes a channel.
