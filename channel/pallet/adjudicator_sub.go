@@ -23,7 +23,7 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"
-	pkgsync "perun.network/go-perun/pkg/sync"
+	pkgsync "polycry.pt/poly-go/sync"
 )
 
 // AdjudicatorSub implements the AdjudicatorSubscription interface.

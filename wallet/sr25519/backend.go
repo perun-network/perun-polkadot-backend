@@ -18,8 +18,8 @@ import (
 	"io"
 
 	"github.com/ChainSafe/go-schnorrkel"
-	pkgio "perun.network/go-perun/pkg/io"
 	pwallet "perun.network/go-perun/wallet"
+	pkgio "perun.network/go-perun/wire/perunio"
 
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 )

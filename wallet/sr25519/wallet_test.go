@@ -19,8 +19,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	pkgtest "perun.network/go-perun/pkg/test"
 	ptest "perun.network/go-perun/wallet/test"
+	pkgtest "polycry.pt/poly-go/test"
 
 	pkgsr25519 "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	wallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"

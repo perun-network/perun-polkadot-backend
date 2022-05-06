@@ -11,6 +11,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/vedhavyas/go-subkey v1.0.2
 	perun.network/go-perun v0.9.1
+	polycry.pt/poly-go v0.0.0-20220301085937-fb9d71b45a37
 )
 
 require (

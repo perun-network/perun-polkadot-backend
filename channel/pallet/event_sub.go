@@ -17,7 +17,7 @@ package pallet
 import (
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"perun.network/go-perun/log"
-	pkgsync "perun.network/go-perun/pkg/sync"
+	pkgsync "polycry.pt/poly-go/sync"
 
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"

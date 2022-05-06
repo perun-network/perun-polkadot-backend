@@ -20,9 +20,9 @@ import (
 	"testing"
 
 	ptest "perun.network/go-perun/channel/test"
-	pkgtest "perun.network/go-perun/pkg/test"
 	pwallet "perun.network/go-perun/wallet"
 	pwallettest "perun.network/go-perun/wallet/test"
+	pkgtest "polycry.pt/poly-go/test"
 
 	_ "github.com/perun-network/perun-polkadot-backend/channel/test"        // init
 	_ "github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test" // init

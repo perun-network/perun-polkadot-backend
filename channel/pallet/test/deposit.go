@@ -17,7 +17,7 @@ package test
 import (
 	"context"
 
-	pkgerrors "perun.network/go-perun/pkg/errors"
+	pkgerrors "polycry.pt/poly-go/errors"
 
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
 )
