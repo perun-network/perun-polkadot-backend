@@ -60,6 +60,33 @@ func (a *Adjudicator) Register(ctx context.Context, req pchannel.AdjudicatorReq,
 	return a.dispute(ctx, req)
 }
 
+// Progress returns an error because app channels are currently not supported.
+func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) error {
+	defer a.Log().Trace("Progress done")
+
+	// Build Dispute Tx.
+	ext, err := a.pallet.BuildProgress(a.onChain, req.Params, req.NewState, req.Sig, req.Idx)
+	if err != nil {
+		return err
+	}
+
+	// Setup the subscription for Progressed events.
+	sub, err := a.pallet.Subscribe(channel.EventIsProgressed(req.Params.ID()), a.pastBlocks)
+	if err != nil {
+		return err
+	}
+	defer sub.Close()
+
+	// Send and wait for TX finalization.
+	a.Log().WithField("cid", req.Tx.ID).WithField("version", req.Tx.Version).Debug("Progress")
+	if err := a.call(ctx, ext); err != nil {
+		return err
+	}
+
+	// Wait for progressed event.
+	return a.waitForProgressed(ctx, sub, req.Tx.Version)
+}
+
 // dispute sends a dispute Ext and waits for the event.
 func (a *Adjudicator) dispute(ctx context.Context, req pchannel.AdjudicatorReq) error {
 	defer a.Log().Trace("Dispute done")
@@ -113,6 +140,35 @@ loop:
 	}
 }
 
+// waitForProgressed blocks until a Progressed event with version greater or equal to
+// the specified version is received.
+func (a *Adjudicator) waitForProgressed(ctx context.Context, sub *EventSub, version channel.Version) error {
+	a.Log().Tracef("Waiting for Progressed event with version >= %d", version)
+	defer a.Log().Trace("waitForProgressed returned")
+
+loop:
+	for {
+		select {
+		case _event := <-sub.Events(): // never returns nil
+			event := _event.(*channel.ProgressedEvent)
+			if !event.Phase.IsApplyExtrinsic {
+				continue loop
+			}
+			if event.Version < version {
+				a.Log().Tracef("Discarded Progressed event. Version: %d", event.Version)
+				continue loop
+			}
+
+			a.Log().Debugf("Accepted Progressed event. Version: %d", event.Version)
+			return nil
+		case err := <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
 // Withdraw concludes a channel and withdraws all funds.
 func (a *Adjudicator) Withdraw(ctx context.Context, req pchannel.AdjudicatorReq, states pchannel.StateMap) error {
 	if len(states) != 0 {
@@ -133,11 +189,6 @@ func (a *Adjudicator) withdraw(ctx context.Context, req pchannel.AdjudicatorReq)
 		return err
 	}
 	return a.call(ctx, ext)
-}
-
-// Progress returns an error because app channels are currently not supported.
-func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) error {
-	return errors.New("progression not supported")
 }
 
 // Subscribe subscribes to adjudicator events.
