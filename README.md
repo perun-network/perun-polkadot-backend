@@ -77,3 +77,9 @@ Use of the source code is governed by the Apache 2.0 license that can be found i
 [Open Grant]: https://github.com/perun-network/Open-Grants-Program/blob/master/applications/perun_channels.md#w3f-open-grant-proposal
 [Web3 Foundation]: https://web3.foundation/about/
 [Open Grants Program]: https://github.com/w3f/Open-Grants-Program#open-grants-program-
+
+
+## TODO
+
+- Test Adjudicator.Progress
+- App channel end-to-end test
