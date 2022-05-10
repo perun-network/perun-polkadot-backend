@@ -20,7 +20,9 @@ import (
 
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
+	pkg_sr25519 "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
+	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"
 	pkgsync "polycry.pt/poly-go/sync"
@@ -59,7 +61,7 @@ func NewAdjudicatorSub(cid channel.ChannelID, p *Pallet, storage substrate.Stora
 // relevant for the adjudicator and concerns a specific channel.
 func isAdjEvent(cid channel.ChannelID) EventPredicate {
 	return func(e channel.PerunEvent) bool {
-		return channel.EventIsDisputed(cid)(e) || channel.EventIsConcluded(cid)(e)
+		return channel.EventIsDisputed(cid)(e) || channel.EventIsProgressed(cid)(e) || channel.EventIsConcluded(cid)(e)
 	}
 }
 
@@ -72,7 +74,7 @@ func (s *AdjudicatorSub) Next() pchannel.AdjudicatorEvent {
 	// Wait for event or closed.
 	select {
 	case event := <-s.sub.Events():
-		if channel.EventIsDisputed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
+		if channel.EventIsDisputed(s.cid)(event) || channel.EventIsProgressed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
 			last = event
 		}
 	case <-s.Closed():
@@ -83,7 +85,7 @@ loop:
 	for {
 		select {
 		case event := <-s.sub.Events():
-			if channel.EventIsDisputed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
+			if channel.EventIsDisputed(s.cid)(event) || channel.EventIsProgressed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
 				last = event
 			}
 		case <-s.Closed():
@@ -121,8 +123,33 @@ func (s *AdjudicatorSub) makePerunEvent(event channel.PerunEvent) (pchannel.Adju
 				VersionV: event.State.Version,
 				TimeoutV: channel.MakeTimeout(dispute.Timeout, s.storage),
 			},
-			State: channel.NewPerunState(&event.State),
-			Sigs:  nil, // go-perun does not care about the sigs
+			State: nil, // only needed for virtual channel support
+			Sigs:  nil, // only needed for virtual channel support
+		}, nil
+	case *channel.ProgressedEvent:
+		s.Log().Trace("AdjudicatorSub creating ProgressedEvent")
+		dispute, err := s.pallet.QueryStateRegister(event.Cid, s.storage, 0)
+		if err != nil {
+			return nil, err
+		}
+
+		appPK, err := pkg_sr25519.NewPK(event.App[:])
+		if err != nil {
+			return nil, err
+		}
+		appAddr := sr25519.NewAddressFromPK(appPK)
+		app, err := pchannel.Resolve(appAddr)
+		if err != nil {
+			return nil, err
+		}
+
+		return &pchannel.ProgressedEvent{
+			AdjudicatorEventBase: pchannel.AdjudicatorEventBase{
+				IDV:      event.Cid,
+				VersionV: event.Version,
+				TimeoutV: channel.MakeTimeout(dispute.Timeout, s.storage),
+			},
+			State: channel.NewPerunState(&dispute.State, app),
 		}, nil
 	case *channel.ConcludedEvent:
 		s.Log().Trace("AdjudicatorSub creating ConcludedEvent")

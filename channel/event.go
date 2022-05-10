@@ -24,10 +24,11 @@ type (
 	EventRecords struct {
 		types.EventRecords
 
-		PerunModule_Deposited []DepositedEvent // nolint: stylecheck
-		PerunModule_Disputed  []DisputedEvent  // nolint: stylecheck
-		PerunModule_Concluded []ConcludedEvent // nolint: stylecheck
-		PerunModule_Withdrawn []WithdrawnEvent // nolint: stylecheck
+		PerunModule_Deposited  []DepositedEvent  // nolint: stylecheck
+		PerunModule_Disputed   []DisputedEvent   // nolint: stylecheck
+		PerunModule_Progressed []ProgressedEvent // nolint: stylecheck
+		PerunModule_Concluded  []ConcludedEvent  // nolint: stylecheck
+		PerunModule_Withdrawn  []WithdrawnEvent  // nolint: stylecheck
 	}
 
 	// PerunEvent is a Perun event.
@@ -54,6 +55,7 @@ type (
 		Phase   types.Phase // required
 		Cid     ChannelID
 		Version Version
+		App     AppID
 		Topics  []types.Hash // required
 	}
 
@@ -120,6 +122,10 @@ func (r *EventRecords) Events() []PerunEvent {
 		ret = append(ret, &e)
 	}
 	for _, e := range r.PerunModule_Disputed {
+		e := e
+		ret = append(ret, &e)
+	}
+	for _, e := range r.PerunModule_Progressed {
 		e := e
 		ret = append(ret, &e)
 	}
