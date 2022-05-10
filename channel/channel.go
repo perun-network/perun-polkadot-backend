@@ -36,6 +36,14 @@ const (
 	FIDLen = 32
 )
 
+type DisputePhase = uint8
+
+const (
+	RegisterPhase DisputePhase = iota
+	ProgressPhase
+	ConcludePhase
+)
+
 type (
 	// Nonce makes a channels ID unique by providing randomness to the params.
 	Nonce = [NonceLen]byte
@@ -56,7 +64,7 @@ type (
 	// Sig is an off-chain signature.
 	Sig = [SigLen]byte
 	// AppID is the identifier of a channel application.
-	AppID uint64
+	AppID = uint64
 
 	// Params holds the fixed parameters of a channel and uniquely identifies it.
 	// This is a trimmed version of a go-perun channel.Params as app channels are
@@ -69,7 +77,7 @@ type (
 		// ChallengeDuration is the duration that disputes can be refuted in.
 		ChallengeDuration ChallengeDuration
 		// App is the identifier of the channel application.
-		App OffIdentity
+		App AppID
 	}
 
 	// State is the state of a channel.
@@ -108,12 +116,12 @@ type (
 
 	// RegisteredState is a channel state that was registered on-chain.
 	RegisteredState struct {
+		// Phase is the phase of the dispute.
+		Phase DisputePhase
 		// State is the state of the channel.
 		State State
 		// Timeout is the duration that the dispute can be refuted in.
 		Timeout ChallengeDuration
-		// Concluded whether the channel is concluded.
-		Concluded bool
 	}
 )
 
