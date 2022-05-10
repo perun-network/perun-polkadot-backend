@@ -179,7 +179,7 @@ func (p *Pallet) BuildProgress(acc pwallet.Account, params *pchannel.Params, nex
 			_params,
 			_next,
 			_sig,
-			signer,
+			uint32(signer),
 		},
 		wallet.AsAddr(acc.Address()).AccountID(),
 		wallet.AsAcc(acc))
