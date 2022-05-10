@@ -37,8 +37,8 @@ func TestAppChannel(t *testing.T) {
 
 	const A, B = 0, 1
 	roles := [2]clienttest.Executer{
-		clienttest.NewMallory(t, setups[A]),
-		clienttest.NewCarol(t, setups[B]),
+		clienttest.NewPaul(t, setups[A]),
+		clienttest.NewPaula(t, setups[B]),
 	}
 
 	rng := pkgtest.Prng(t)
