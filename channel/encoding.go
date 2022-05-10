@@ -199,7 +199,7 @@ func NewParams(p *pchannel.Params) (*Params, error) {
 		Nonce:             nonce,
 		Participants:      parts,
 		ChallengeDuration: MakeChallengeDuration(p.ChallengeDuration),
-		App:               appID,
+		App:               uint64(appID[0]),
 	}, err
 }
 
