@@ -187,10 +187,14 @@ func NewParams(p *pchannel.Params) (*Params, error) {
 		return nil, err
 	}
 
-	appID, err := MakeOffIdent(p.App.Def())
-	if err != nil {
-		return nil, err
+	var appID OffIdentity
+	if !pchannel.IsNoApp(p.App) {
+		appID, err = MakeOffIdent(p.App.Def())
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	return &Params{
 		Nonce:             nonce,
 		Participants:      parts,
