@@ -64,7 +64,7 @@ type (
 	// Sig is an off-chain signature.
 	Sig = [SigLen]byte
 	// AppID is the identifier of a channel application.
-	AppID = uint64
+	AppID = OffIdentity
 
 	// Params holds the fixed parameters of a channel and uniquely identifies it.
 	// This is a trimmed version of a go-perun channel.Params as app channels are
@@ -120,6 +120,8 @@ type (
 		Phase DisputePhase
 		// State is the state of the channel.
 		State State
+		// App is the app of the channel.
+		App AppID
 		// Timeout is the duration that the dispute can be refuted in.
 		Timeout ChallengeDuration
 	}

@@ -55,6 +55,7 @@ type (
 		Phase   types.Phase // required
 		Cid     ChannelID
 		Version Version
+		App     AppID
 		Topics  []types.Hash // required
 	}
 

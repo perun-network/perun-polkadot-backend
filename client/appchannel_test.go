@@ -18,6 +18,7 @@ import (
 	"context"
 	"math/big"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"perun.network/go-perun/channel"
@@ -55,7 +56,8 @@ func TestAppChannel(t *testing.T) {
 		),
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), TestTimeoutBlocks*s.BlockTime)
+	// ctx, cancel := context.WithTimeout(context.Background(), TestTimeoutBlocks*s.BlockTime)
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Second)
 	defer cancel()
 	err := clienttest.ExecuteTwoPartyTest(ctx, roles, execConfig)
 	assert.NoError(t, err)

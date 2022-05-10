@@ -20,7 +20,9 @@ import (
 
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
+	pkg_sr25519 "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
+	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"
 	pkgsync "polycry.pt/poly-go/sync"
@@ -121,12 +123,22 @@ func (s *AdjudicatorSub) makePerunEvent(event channel.PerunEvent) (pchannel.Adju
 				VersionV: event.State.Version,
 				TimeoutV: channel.MakeTimeout(dispute.Timeout, s.storage),
 			},
-			State: channel.NewPerunState(&event.State),
-			Sigs:  nil, // go-perun does not care about the sigs
+			State: nil, // only needed for virtual channel support
+			Sigs:  nil, // only needed for virtual channel support
 		}, nil
 	case *channel.ProgressedEvent:
 		s.Log().Trace("AdjudicatorSub creating ProgressedEvent")
 		dispute, err := s.pallet.QueryStateRegister(event.Cid, s.storage, 0)
+		if err != nil {
+			return nil, err
+		}
+
+		appPK, err := pkg_sr25519.NewPK(dispute.App[:])
+		if err != nil {
+			return nil, err
+		}
+		appAddr := sr25519.NewAddressFromPK(appPK)
+		app, err := pchannel.Resolve(appAddr)
 		if err != nil {
 			return nil, err
 		}
@@ -137,7 +149,7 @@ func (s *AdjudicatorSub) makePerunEvent(event channel.PerunEvent) (pchannel.Adju
 				VersionV: event.Version,
 				TimeoutV: channel.MakeTimeout(dispute.Timeout, s.storage),
 			},
-			State: channel.NewPerunState(&dispute.State),
+			State: channel.NewPerunState(&dispute.State, app),
 		}, nil
 	case *channel.ConcludedEvent:
 		s.Log().Trace("AdjudicatorSub creating ConcludedEvent")

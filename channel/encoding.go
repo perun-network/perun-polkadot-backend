@@ -15,6 +15,7 @@
 package channel
 
 import (
+	"log"
 	"math/big"
 	"time"
 
@@ -135,12 +136,17 @@ func NewState(s *pchannel.State) (*State, error) {
 
 // NewPerunState creates a new Perun state and fills the App-Data with a
 // default value.
-func NewPerunState(s *State) *pchannel.State {
+func NewPerunState(s *State, app pchannel.App) *pchannel.State {
+	data := app.NewData()
+	if err := data.UnmarshalBinary(s.Data); err != nil {
+		log.Panicf("decoding app data: %v", err)
+	}
+
 	return &pchannel.State{
 		ID:         s.Channel,
 		Version:    s.Version,
 		Allocation: MakePerunAlloc(s.Balances),
-		Data:       pchannel.NoData(),
+		Data:       data,
 		IsFinal:    s.Final,
 	}
 }
@@ -199,7 +205,7 @@ func NewParams(p *pchannel.Params) (*Params, error) {
 		Nonce:             nonce,
 		Participants:      parts,
 		ChallengeDuration: MakeChallengeDuration(p.ChallengeDuration),
-		App:               uint64(appID[0]),
+		App:               appID,
 	}, err
 }
 
