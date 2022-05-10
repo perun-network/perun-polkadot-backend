@@ -59,7 +59,7 @@ func NewAdjudicatorSub(cid channel.ChannelID, p *Pallet, storage substrate.Stora
 // relevant for the adjudicator and concerns a specific channel.
 func isAdjEvent(cid channel.ChannelID) EventPredicate {
 	return func(e channel.PerunEvent) bool {
-		return channel.EventIsDisputed(cid)(e) || channel.EventIsConcluded(cid)(e)
+		return channel.EventIsDisputed(cid)(e) || channel.EventIsProgressed(cid)(e) || channel.EventIsConcluded(cid)(e)
 	}
 }
 
@@ -72,7 +72,7 @@ func (s *AdjudicatorSub) Next() pchannel.AdjudicatorEvent {
 	// Wait for event or closed.
 	select {
 	case event := <-s.sub.Events():
-		if channel.EventIsDisputed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
+		if channel.EventIsDisputed(s.cid)(event) || channel.EventIsProgressed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
 			last = event
 		}
 	case <-s.Closed():
@@ -83,7 +83,7 @@ loop:
 	for {
 		select {
 		case event := <-s.sub.Events():
-			if channel.EventIsDisputed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
+			if channel.EventIsDisputed(s.cid)(event) || channel.EventIsProgressed(s.cid)(event) || channel.EventIsConcluded(s.cid)(event) {
 				last = event
 			}
 		case <-s.Closed():
@@ -123,6 +123,21 @@ func (s *AdjudicatorSub) makePerunEvent(event channel.PerunEvent) (pchannel.Adju
 			},
 			State: channel.NewPerunState(&event.State),
 			Sigs:  nil, // go-perun does not care about the sigs
+		}, nil
+	case *channel.ProgressedEvent:
+		s.Log().Trace("AdjudicatorSub creating ProgressedEvent")
+		dispute, err := s.pallet.QueryStateRegister(event.Cid, s.storage, 0)
+		if err != nil {
+			return nil, err
+		}
+
+		return &pchannel.ProgressedEvent{
+			AdjudicatorEventBase: pchannel.AdjudicatorEventBase{
+				IDV:      event.Cid,
+				VersionV: event.Version,
+				TimeoutV: channel.MakeTimeout(dispute.Timeout, s.storage),
+			},
+			State: channel.NewPerunState(&dispute.State),
 		}, nil
 	case *channel.ConcludedEvent:
 		s.Log().Trace("AdjudicatorSub creating ConcludedEvent")
