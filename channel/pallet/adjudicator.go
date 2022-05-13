@@ -197,24 +197,31 @@ func (a *Adjudicator) Subscribe(ctx context.Context, cid pchannel.ID) (pchannel.
 }
 
 // ensureConcluded ensures that a channel was concluded.
-// Returns an `ErrConcludedDifferentVersion` if the version of the state
-// that the channel was concluded with does not match the expected version.
 func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.AdjudicatorReq) error {
 	// Fetch on-chain dispute.
-	dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
-	if err != nil {
-		if errors.Is(err, ErrNoRegisteredState) {
-			dis = nil
-		} else {
-			return err
+	dis, err := func() (*channel.RegisteredState, error) {
+		dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
+		if err != nil {
+			return nil, err
+		} else if dis.Phase == channel.ConcludePhase {
+			// Check version.
+			if req.Tx.Version != dis.State.Version {
+				return nil, ErrConcludedDifferentVersion
+			}
 		}
-	}
-	// Non-final states need to respect the dispute timeout, if there is a dispute.
-	if dis != nil && !req.Tx.IsFinal {
-		timeout := channel.MakeTimeout(dis.Timeout, a.storage)
-		if err := timeout.Wait(ctx); err != nil {
-			return err
-		}
+		return dis, nil
+	}()
+
+	// Indicates whether we should use concludeFinal.
+	concludeFinal := false
+	if errors.Is(err, ErrConcludedDifferentVersion) {
+		return err
+	} else if req.Tx.State.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) != nil {
+		a.Log().Warnf("fetching dispute: %v", err)
+		// If finalized and fully-signed, we can conclude immediately.
+		concludeFinal = true
+	} else {
+		return err
 	}
 
 	// Setup the subscription for Concluded events.
@@ -223,15 +230,29 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 		return err
 	}
 	defer sub.Close()
-	// Build our conclude Extrinsic.
-	ext, err := a.pallet.BuildConclude(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
+
+	// Build the conclude Extrinisic.
+	ext, err := func() (*types.Extrinsic, error) {
+		if concludeFinal {
+			return a.pallet.BuildConcludeFinal(a.onChain, req.Params)
+		}
+
+		// If not final, we must wait for the dispute timeout.
+		timeout := channel.MakeTimeout(dis.Timeout, a.storage)
+		if err := timeout.Wait(ctx); err != nil {
+			return nil, err
+		}
+		return a.pallet.BuildConclude(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
+	}()
 	if err != nil {
 		return err
 	}
+
 	// Send the Extrinsic.
 	if err := a.call(ctx, ext); err != nil {
 		return err
 	}
+
 	// Wait for a concluded event that either we or some other party caused.
 	if err := a.waitForConcluded(ctx, sub, req.Tx.ID); err != nil {
 		return err
@@ -298,4 +319,19 @@ func (*Adjudicator) checkRegister(req pchannel.AdjudicatorReq, states []pchannel
 	default:
 		return nil
 	}
+}
+
+func fullySignedTx(tx pchannel.Transaction, parts []pwallet.Address) error {
+	if len(tx.Sigs) != len(parts) {
+		return errors.Errorf("wrong number of signatures")
+	}
+
+	for i, p := range parts {
+		if ok, err := pchannel.Verify(p, tx.State, tx.Sigs[i]); err != nil {
+			return errors.WithMessagef(err, "verifying signature[%d]", i)
+		} else if !ok {
+			return errors.Errorf("invalid signature[%d]", i)
+		}
+	}
+	return nil
 }
