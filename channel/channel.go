@@ -120,8 +120,6 @@ type (
 		Phase DisputePhase
 		// State is the state of the channel.
 		State State
-		// App is the app of the channel.
-		App AppID
 		// Timeout is the duration that the dispute can be refuted in.
 		Timeout ChallengeDuration
 	}

@@ -145,6 +145,7 @@ func NewPerunState(s *State, app pchannel.App) *pchannel.State {
 	return &pchannel.State{
 		ID:         s.Channel,
 		Version:    s.Version,
+		App:        app,
 		Allocation: MakePerunAlloc(s.Balances),
 		Data:       data,
 		IsFinal:    s.Final,

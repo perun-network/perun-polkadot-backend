@@ -133,7 +133,7 @@ func (s *AdjudicatorSub) makePerunEvent(event channel.PerunEvent) (pchannel.Adju
 			return nil, err
 		}
 
-		appPK, err := pkg_sr25519.NewPK(dispute.App[:])
+		appPK, err := pkg_sr25519.NewPK(event.App[:])
 		if err != nil {
 			return nil, err
 		}
