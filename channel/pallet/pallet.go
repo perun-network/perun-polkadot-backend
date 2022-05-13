@@ -49,6 +49,8 @@ var (
 	Progress = substrate.NewExtName(PerunPallet, "progress")
 	// Conclude is the name of the conclude function of the pallet.
 	Conclude = substrate.NewExtName(PerunPallet, "conclude")
+	// ConcludeFinal is the name of the conclude_final function of the pallet.
+	ConcludeFinal = substrate.NewExtName(PerunPallet, "conclude_final")
 	// Withdraw is the name of the withdraw function of the pallet.
 	Withdraw = substrate.NewExtName(PerunPallet, "withdraw")
 
@@ -186,7 +188,22 @@ func (p *Pallet) BuildProgress(acc pwallet.Account, params *pchannel.Params, nex
 }
 
 // BuildConclude returns an extrinsic that concludes a channel.
-func (p *Pallet) BuildConclude(acc pwallet.Account, params *pchannel.Params, state *pchannel.State, sigs []pwallet.Sig) (*types.Extrinsic, error) {
+func (p *Pallet) BuildConclude(acc pwallet.Account, params *pchannel.Params) (*types.Extrinsic, error) {
+	_params, err := channel.NewParams(params)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.BuildExt(Conclude,
+		[]interface{}{
+			_params,
+		},
+		wallet.AsAddr(acc.Address()).AccountID(),
+		wallet.AsAcc(acc))
+}
+
+// BuildConcludeFinal returns an extrinsic that concludes a channel.
+func (p *Pallet) BuildConcludeFinal(acc pwallet.Account, params *pchannel.Params, state *pchannel.State, sigs []pwallet.Sig) (*types.Extrinsic, error) {
 	_params, err := channel.NewParams(params)
 	if err != nil {
 		return nil, err
@@ -200,11 +217,12 @@ func (p *Pallet) BuildConclude(acc pwallet.Account, params *pchannel.Params, sta
 		return nil, err
 	}
 
-	return p.BuildExt(Conclude,
+	return p.BuildExt(ConcludeFinal,
 		[]interface{}{
 			_params,
 			_state,
-			_sigs},
+			_sigs,
+		},
 		wallet.AsAddr(acc.Address()).AccountID(),
 		wallet.AsAcc(acc))
 }
