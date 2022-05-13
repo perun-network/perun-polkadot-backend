@@ -42,6 +42,8 @@ var (
 	ErrConcludedDifferentVersion = errors.New("channel was concluded with a different version")
 	// ErrAdjudicatorReqIncompatible the adjudicator request was not compatible.
 	ErrAdjudicatorReqIncompatible = errors.New("adjudicator request was not compatible")
+	// ErrAdjudicatorReqIncompatible the adjudicator request was not compatible.
+	ErrReqVersionTooLow = errors.New("request version too low")
 )
 
 // NewAdjudicator returns a new Adjudicator.
@@ -198,29 +200,46 @@ func (a *Adjudicator) Subscribe(ctx context.Context, cid pchannel.ID) (pchannel.
 
 // ensureConcluded ensures that a channel was concluded.
 func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.AdjudicatorReq) error {
-	// Fetch on-chain dispute.
-	dis, err := func() (*channel.RegisteredState, error) {
-		dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
-		if err != nil {
-			return nil, err
-		} else if dis.Phase == channel.ConcludePhase {
-			// Check version.
-			if req.Tx.Version != dis.State.Version {
-				return nil, ErrConcludedDifferentVersion
-			}
-		}
-		return dis, nil
-	}()
+	// Indicates whether we can use concludeFinal.
+	concludeFinal := req.Tx.State.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) == nil
 
-	// Indicates whether we should use concludeFinal.
-	concludeFinal := false
-	if errors.Is(err, ErrConcludedDifferentVersion) {
+	// Fetch on-chain dispute.
+	dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
+	if err != nil && !concludeFinal {
+		// If we couldn't retrieve the dispute state and we cannot use concludeFinal, we return the error.
 		return err
-	} else if req.Tx.State.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) != nil {
-		a.Log().Warnf("fetching dispute: %v", err)
-		// If finalized and fully-signed, we can conclude immediately.
-		concludeFinal = true
-	} else {
+	}
+
+	// If we could retrieve the dispute state, check phase and version.
+	if !errors.Is(err, ErrNoRegisteredState) {
+		if dis.State.Version > req.Tx.Version {
+			// The dispute version is greater than the request version.
+			return errors.WithMessagef(ErrReqVersionTooLow, "got %v, expected %v", req.Tx.Version, dis.State.Version)
+		} else if dis.Phase == channel.ConcludePhase {
+			if req.Tx.Version != dis.State.Version {
+				// The channel is concluded with a different version.
+				return ErrConcludedDifferentVersion
+			}
+			// The channel is already concluded with the expected version.
+			return nil
+		}
+	}
+
+	// Build the Extrinisic.
+	ext, err := func() (*types.Extrinsic, error) {
+		if !concludeFinal {
+			// Wait for the dispute timeout.
+			timeout := channel.MakeTimeout(dis.Timeout, a.storage)
+			if err := timeout.Wait(ctx); err != nil {
+				return nil, err
+			}
+
+			return a.pallet.BuildConclude(a.onChain, req.Params)
+		}
+
+		return a.pallet.BuildConcludeFinal(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
+	}()
+	if err != nil {
 		return err
 	}
 
@@ -230,23 +249,6 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 		return err
 	}
 	defer sub.Close()
-
-	// Build the conclude Extrinisic.
-	ext, err := func() (*types.Extrinsic, error) {
-		if concludeFinal {
-			return a.pallet.BuildConcludeFinal(a.onChain, req.Params)
-		}
-
-		// If not final, we must wait for the dispute timeout.
-		timeout := channel.MakeTimeout(dis.Timeout, a.storage)
-		if err := timeout.Wait(ctx); err != nil {
-			return nil, err
-		}
-		return a.pallet.BuildConclude(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
-	}()
-	if err != nil {
-		return err
-	}
 
 	// Send the Extrinsic.
 	if err := a.call(ctx, ext); err != nil {
