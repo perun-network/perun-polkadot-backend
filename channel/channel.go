@@ -67,8 +67,6 @@ type (
 	AppID = OffIdentity
 
 	// Params holds the fixed parameters of a channel and uniquely identifies it.
-	// This is a trimmed version of a go-perun channel.Params as app channels are
-	// not supported yet.
 	Params struct {
 		// Nonce is the unique nonce of a channel.
 		Nonce Nonce
@@ -81,8 +79,6 @@ type (
 	}
 
 	// State is the state of a channel.
-	// This is a trimmed version of a go-perun channel.State as app channels are
-	// not supported yet.
 	State struct {
 		// Channel is the unique ID of the channel that this state belongs to.
 		Channel ChannelID
