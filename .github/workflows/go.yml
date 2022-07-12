@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: Start Substrate node
-        run: docker run --rm -d --name substrate -p 9944:9944 ghcr.io/perun-network/polkadot-test-node:0.2.0-alpha
+        run: docker run --rm -d --name substrate -p 9944:9944 ghcr.io/perun-network/polkadot-test-node:0.2.0
 
       - name: Wait for Substrate node
         # Wait for port 9944 to listen.
