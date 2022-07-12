@@ -36,6 +36,14 @@ const (
 	FIDLen = 32
 )
 
+type DisputePhase = uint8
+
+const (
+	RegisterPhase DisputePhase = iota
+	ProgressPhase
+	ConcludePhase
+)
+
 type (
 	// Nonce makes a channels ID unique by providing randomness to the params.
 	Nonce = [NonceLen]byte
@@ -104,14 +112,12 @@ type (
 
 	// RegisteredState is a channel state that was registered on-chain.
 	RegisteredState struct {
+		// Phase is the phase of the dispute.
+		Phase DisputePhase
 		// State is the state of the channel.
 		State State
-		// App is the app of the channel.
-		App AppID
 		// Timeout is the duration that the dispute can be refuted in.
 		Timeout ChallengeDuration
-		// Concluded whether the channel is concluded.
-		Concluded bool
 	}
 )
 
