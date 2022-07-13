@@ -66,7 +66,7 @@ func NewDepositReqFromPerun(req *pchannel.FundingReq, acc pwallet.Account) (*Dep
 
 // NewDepositor returns a new Depositor.
 func NewDepositor(pallet *Pallet) *Depositor {
-	return &Depositor{log.MakeEmbedding(log.Get()), pallet}
+	return &Depositor{log.MakeEmbedding(log.Default()), pallet}
 }
 
 // Deposit deposits funds into a channel as specified by the request.

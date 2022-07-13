@@ -55,7 +55,7 @@ func NewAPI(url string, network NetworkID) (*API, error) {
 	if _, ok := Meta(meta); !ok {
 		return nil, ErrWrongNodeVersion
 	}
-	return &API{log.MakeEmbedding(log.Get()), new(sync.Mutex), url, api, network, meta}, nil
+	return &API{log.MakeEmbedding(log.Default()), new(sync.Mutex), url, api, network, meta}, nil
 }
 
 // AccountInfo returns the account info for an Address.

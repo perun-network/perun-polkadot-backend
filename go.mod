@@ -5,12 +5,13 @@ go 1.17
 require (
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20210318173838-ccb5cd955283
 	github.com/centrifuge/go-substrate-rpc-client/v3 v3.0.2
-	github.com/ethereum/go-ethereum v1.10.9
+	github.com/ethereum/go-ethereum v1.10.12
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/vedhavyas/go-subkey v1.0.2
-	perun.network/go-perun v0.7.1-0.20211020134606-e5b280976a47
+	perun.network/go-perun v0.9.2
+	polycry.pt/poly-go v0.0.0-20220301085937-fb9d71b45a37
 )
 
 require (

@@ -18,7 +18,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	pkgtest "perun.network/go-perun/pkg/test"
+	pkgtest "polycry.pt/poly-go/test"
 
 	"github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
 )
@@ -31,7 +31,7 @@ func TestRandomizer_RandomAddress(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 		addr2 := r.NewRandomAddress(rng)
-		require.False(t, addr.Equals(addr2))
+		require.False(t, addr.Equal(addr2))
 	}
 }
 
@@ -43,6 +43,6 @@ func TestRandomWallet_RandomAccount(t *testing.T) {
 
 	for i := 0; i < 1000; i++ {
 		addr2 := r.NewRandomAccount(rng).Address()
-		require.False(t, addr.Equals(addr2))
+		require.False(t, addr.Equal(addr2))
 	}
 }

@@ -23,8 +23,8 @@ import (
 	"github.com/stretchr/testify/require"
 	pchannel "perun.network/go-perun/channel"
 	pchtest "perun.network/go-perun/channel/test"
-	pkgtest "perun.network/go-perun/pkg/test"
 	"perun.network/go-perun/wallet"
+	pkgtest "polycry.pt/poly-go/test"
 
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
