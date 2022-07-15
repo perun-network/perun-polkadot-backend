@@ -80,7 +80,11 @@ func (s *Setup) AssertNoRegistered(cid channel.ChannelID) {
 func (s *Setup) AssertRegistered(state *channel.State, concluded bool) {
 	reg, err := s.Pallet.QueryStateRegister(state.Channel, s.API, PastBlocks)
 	require.NoError(s.T, err)
-	assert.Equal(s.T, concluded, reg.Concluded)
+	assert.Equal(s.T, reg.Phase == channel.ConcludePhase, concluded)
+	// Ensure that nil and []byte{} count as equal.
+	if len(reg.State.Data) == 0 && len(state.Data) == 0 {
+		reg.State.Data = state.Data
+	}
 	assert.Equal(s.T, *state, reg.State)
 }
 

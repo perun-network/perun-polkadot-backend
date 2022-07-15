@@ -60,6 +60,7 @@ func NewEventSub(source *substrate.EventSource, meta *types.Metadata, p EventPre
 			select {
 			case set := <-source.Events():
 				if err = sub.decodeEventRecords(set, meta); err != nil {
+					sub.Log().Errorf("decoding event records: %v", err)
 					break loop
 				}
 			case err = <-source.Err():

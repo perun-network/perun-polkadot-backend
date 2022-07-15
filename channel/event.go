@@ -24,10 +24,11 @@ type (
 	EventRecords struct {
 		types.EventRecords
 
-		PerunModule_Deposited []DepositedEvent // nolint: stylecheck
-		PerunModule_Disputed  []DisputedEvent  // nolint: stylecheck
-		PerunModule_Concluded []ConcludedEvent // nolint: stylecheck
-		PerunModule_Withdrawn []WithdrawnEvent // nolint: stylecheck
+		PerunModule_Deposited  []DepositedEvent  // nolint: stylecheck
+		PerunModule_Disputed   []DisputedEvent   // nolint: stylecheck
+		PerunModule_Progressed []ProgressedEvent // nolint: stylecheck
+		PerunModule_Concluded  []ConcludedEvent  // nolint: stylecheck
+		PerunModule_Withdrawn  []WithdrawnEvent  // nolint: stylecheck
 	}
 
 	// PerunEvent is a Perun event.
@@ -47,6 +48,15 @@ type (
 		Cid    ChannelID
 		State  State
 		Topics []types.Hash // required
+	}
+
+	// ProgressedEvent is emitted when a channel state was progressed.
+	ProgressedEvent struct {
+		Phase   types.Phase // required
+		Cid     ChannelID
+		Version Version
+		App     AppID
+		Topics  []types.Hash // required
 	}
 
 	// ConcludedEvent is emitted when a channel is concluded.
@@ -79,6 +89,15 @@ func EventIsDisputed(cid ChannelID) func(PerunEvent) bool {
 	}
 }
 
+// EventIsProgressed checks whether an event is a ProgressedEvent for a
+// specific channel.
+func EventIsProgressed(cid ChannelID) func(PerunEvent) bool {
+	return func(e PerunEvent) bool {
+		event, ok := e.(*ProgressedEvent)
+		return ok && event.Cid == cid
+	}
+}
+
 // EventIsConcluded checks whether an event is a ConcludedEvent for a
 // specific channel.
 func EventIsConcluded(cid ChannelID) func(PerunEvent) bool {
@@ -103,6 +122,10 @@ func (r *EventRecords) Events() []PerunEvent {
 		ret = append(ret, &e)
 	}
 	for _, e := range r.PerunModule_Disputed {
+		e := e
+		ret = append(ret, &e)
+	}
+	for _, e := range r.PerunModule_Progressed {
 		e := e
 		ret = append(ret, &e)
 	}

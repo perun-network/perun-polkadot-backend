@@ -36,6 +36,14 @@ const (
 	FIDLen = 32
 )
 
+type DisputePhase = uint8
+
+const (
+	RegisterPhase DisputePhase = iota
+	ProgressPhase
+	ConcludePhase
+)
+
 type (
 	// Nonce makes a channels ID unique by providing randomness to the params.
 	Nonce = [NonceLen]byte
@@ -55,10 +63,10 @@ type (
 	Balance = types.U128
 	// Sig is an off-chain signature.
 	Sig = [SigLen]byte
+	// AppID is the identifier of a channel application.
+	AppID = OffIdentity
 
 	// Params holds the fixed parameters of a channel and uniquely identifies it.
-	// This is a trimmed version of a go-perun channel.Params as app channels are
-	// not supported yet.
 	Params struct {
 		// Nonce is the unique nonce of a channel.
 		Nonce Nonce
@@ -66,11 +74,11 @@ type (
 		Participants []OffIdentity
 		// ChallengeDuration is the duration that disputes can be refuted in.
 		ChallengeDuration ChallengeDuration
+		// App is the identifier of the channel application.
+		App AppID
 	}
 
 	// State is the state of a channel.
-	// This is a trimmed version of a go-perun channel.State as app channels are
-	// not supported yet.
 	State struct {
 		// Channel is the unique ID of the channel that this state belongs to.
 		Channel ChannelID
@@ -80,6 +88,8 @@ type (
 		Balances []Balance
 		// Final whether or not this state is the final one.
 		Final bool
+		// Data is the channel's application data.
+		Data []byte
 	}
 
 	// Withdrawal is used by a participant to withdraw his on-chain funds.
@@ -102,12 +112,12 @@ type (
 
 	// RegisteredState is a channel state that was registered on-chain.
 	RegisteredState struct {
+		// Phase is the phase of the dispute.
+		Phase DisputePhase
 		// State is the state of the channel.
 		State State
 		// Timeout is the duration that the dispute can be refuted in.
 		Timeout ChallengeDuration
-		// Concluded whether the channel is concluded.
-		Concluded bool
 	}
 )
 

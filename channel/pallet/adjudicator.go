@@ -42,6 +42,8 @@ var (
 	ErrConcludedDifferentVersion = errors.New("channel was concluded with a different version")
 	// ErrAdjudicatorReqIncompatible the adjudicator request was not compatible.
 	ErrAdjudicatorReqIncompatible = errors.New("adjudicator request was not compatible")
+	// ErrAdjudicatorReqIncompatible the adjudicator request was not compatible.
+	ErrReqVersionTooLow = errors.New("request version too low")
 )
 
 // NewAdjudicator returns a new Adjudicator.
@@ -58,6 +60,33 @@ func (a *Adjudicator) Register(ctx context.Context, req pchannel.AdjudicatorReq,
 	}
 	// Execute dispute.
 	return a.dispute(ctx, req)
+}
+
+// Progress returns an error because app channels are currently not supported.
+func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) error {
+	defer a.Log().Trace("Progress done")
+
+	// Build Dispute Tx.
+	ext, err := a.pallet.BuildProgress(a.onChain, req.Params, req.NewState, req.Sig, req.Idx)
+	if err != nil {
+		return err
+	}
+
+	// Setup the subscription for Progressed events.
+	sub, err := a.pallet.Subscribe(channel.EventIsProgressed(req.Params.ID()), a.pastBlocks)
+	if err != nil {
+		return err
+	}
+	defer sub.Close()
+
+	// Send and wait for TX finalization.
+	a.Log().WithField("cid", req.Tx.ID).WithField("version", req.Tx.Version).Debug("Progress")
+	if err := a.call(ctx, ext); err != nil {
+		return err
+	}
+
+	// Wait for progressed event.
+	return a.waitForProgressed(ctx, sub, req.Tx.Version)
 }
 
 // dispute sends a dispute Ext and waits for the event.
@@ -113,6 +142,35 @@ loop:
 	}
 }
 
+// waitForProgressed blocks until a Progressed event with version greater or equal to
+// the specified version is received.
+func (a *Adjudicator) waitForProgressed(ctx context.Context, sub *EventSub, version channel.Version) error {
+	a.Log().Tracef("Waiting for Progressed event with version >= %d", version)
+	defer a.Log().Trace("waitForProgressed returned")
+
+loop:
+	for {
+		select {
+		case _event := <-sub.Events(): // never returns nil
+			event := _event.(*channel.ProgressedEvent)
+			if !event.Phase.IsApplyExtrinsic {
+				continue loop
+			}
+			if event.Version < version {
+				a.Log().Tracef("Discarded Progressed event. Version: %d", event.Version)
+				continue loop
+			}
+
+			a.Log().Debugf("Accepted Progressed event. Version: %d", event.Version)
+			return nil
+		case err := <-sub.Err():
+			return err
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
 // Withdraw concludes a channel and withdraws all funds.
 func (a *Adjudicator) Withdraw(ctx context.Context, req pchannel.AdjudicatorReq, states pchannel.StateMap) error {
 	if len(states) != 0 {
@@ -135,35 +193,54 @@ func (a *Adjudicator) withdraw(ctx context.Context, req pchannel.AdjudicatorReq)
 	return a.call(ctx, ext)
 }
 
-// Progress returns an error because app channels are currently not supported.
-func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) error {
-	return errors.New("progression not supported")
-}
-
 // Subscribe subscribes to adjudicator events.
 func (a *Adjudicator) Subscribe(ctx context.Context, cid pchannel.ID) (pchannel.AdjudicatorSubscription, error) {
 	return NewAdjudicatorSub(cid, a.pallet, a.storage, a.pastBlocks)
 }
 
 // ensureConcluded ensures that a channel was concluded.
-// Returns an `ErrConcludedDifferentVersion` if the version of the state
-// that the channel was concluded with does not match the expected version.
 func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.AdjudicatorReq) error {
+	// Indicates whether we can use concludeFinal.
+	concludeFinal := req.Tx.State.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) == nil
+
 	// Fetch on-chain dispute.
 	dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
-	if err != nil {
-		if errors.Is(err, ErrNoRegisteredState) {
-			dis = nil
-		} else {
-			return err
+	if err != nil && !concludeFinal {
+		// If we couldn't retrieve the dispute state and we cannot use concludeFinal, we return the error.
+		return err
+	}
+
+	// If we could retrieve the dispute state, check phase and version.
+	if !errors.Is(err, ErrNoRegisteredState) {
+		if dis.State.Version > req.Tx.Version {
+			// The dispute version is greater than the request version.
+			return errors.WithMessagef(ErrReqVersionTooLow, "got %v, expected %v", req.Tx.Version, dis.State.Version)
+		} else if dis.Phase == channel.ConcludePhase {
+			if req.Tx.Version != dis.State.Version {
+				// The channel is concluded with a different version.
+				return ErrConcludedDifferentVersion
+			}
+			// The channel is already concluded with the expected version.
+			return nil
 		}
 	}
-	// Non-final states need to respect the dispute timeout, if there is a dispute.
-	if dis != nil && !req.Tx.IsFinal {
-		timeout := channel.MakeTimeout(dis.Timeout, a.storage)
-		if err := timeout.Wait(ctx); err != nil {
-			return err
+
+	// Build the Extrinisic.
+	ext, err := func() (*types.Extrinsic, error) {
+		if !concludeFinal {
+			// Wait for the dispute timeout.
+			timeout := channel.MakeTimeout(dis.Timeout, a.storage)
+			if err := timeout.Wait(ctx); err != nil {
+				return nil, err
+			}
+
+			return a.pallet.BuildConclude(a.onChain, req.Params)
 		}
+
+		return a.pallet.BuildConcludeFinal(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
+	}()
+	if err != nil {
+		return err
 	}
 
 	// Setup the subscription for Concluded events.
@@ -172,15 +249,12 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 		return err
 	}
 	defer sub.Close()
-	// Build our conclude Extrinsic.
-	ext, err := a.pallet.BuildConclude(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
-	if err != nil {
-		return err
-	}
+
 	// Send the Extrinsic.
 	if err := a.call(ctx, ext); err != nil {
 		return err
 	}
+
 	// Wait for a concluded event that either we or some other party caused.
 	if err := a.waitForConcluded(ctx, sub, req.Tx.ID); err != nil {
 		return err
@@ -247,4 +321,19 @@ func (*Adjudicator) checkRegister(req pchannel.AdjudicatorReq, states []pchannel
 	default:
 		return nil
 	}
+}
+
+func fullySignedTx(tx pchannel.Transaction, parts []pwallet.Address) error {
+	if len(tx.Sigs) != len(parts) {
+		return errors.Errorf("wrong number of signatures")
+	}
+
+	for i, p := range parts {
+		if ok, err := pchannel.Verify(p, tx.State, tx.Sigs[i]); err != nil {
+			return errors.WithMessagef(err, "verifying signature[%d]", i)
+		} else if !ok {
+			return errors.Errorf("invalid signature[%d]", i)
+		}
+	}
+	return nil
 }
