@@ -228,9 +228,14 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 	// Build the Extrinisic.
 	ext, err := func() (*types.Extrinsic, error) {
 		if !concludeFinal {
-			// Wait for the dispute timeout.
-			timeout := channel.MakeTimeout(dis.Timeout, a.storage)
-			if err := timeout.Wait(ctx); err != nil {
+			// Wait for the dispute timeout. If the channel has an app, extend the
+			// timeout by one challenge duration.
+			timeout := dis.Timeout
+			if !pchannel.IsNoApp(req.Params.App) {
+				timeout += req.Params.ChallengeDuration
+			}
+			chTimeout := channel.MakeTimeout(timeout, a.storage)
+			if err := chTimeout.Wait(ctx); err != nil {
 				return nil, err
 			}
 
