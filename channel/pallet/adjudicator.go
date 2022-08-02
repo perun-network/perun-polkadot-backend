@@ -66,6 +66,11 @@ func (a *Adjudicator) Register(ctx context.Context, req pchannel.AdjudicatorReq,
 func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) error {
 	defer a.Log().Trace("Progress done")
 
+	err := a.waitProgressable(ctx, req.Params.ID())
+	if err != nil {
+		return err
+	}
+
 	// Build Dispute Tx.
 	ext, err := a.pallet.BuildProgress(a.onChain, req.Params, req.NewState, req.Sig, req.Idx)
 	if err != nil {
@@ -140,6 +145,24 @@ loop:
 			return ctx.Err()
 		}
 	}
+}
+
+func (a *Adjudicator) waitProgressable(ctx context.Context, ch pchannel.ID) error {
+	// Fetch on-chain dispute.
+	dis, err := a.pallet.QueryStateRegister(ch, a.storage, a.pastBlocks)
+	if err != nil {
+		return err
+	}
+
+	// If we are in the register phase, we wait for the dispute timeout.
+	if dis.Phase == channel.RegisterPhase {
+		timeout := channel.MakeTimeout(dis.Timeout, a.storage)
+		err := timeout.Wait(ctx)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // waitForProgressed blocks until a Progressed event with version greater or equal to
@@ -228,9 +251,14 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 	// Build the Extrinisic.
 	ext, err := func() (*types.Extrinsic, error) {
 		if !concludeFinal {
-			// Wait for the dispute timeout.
-			timeout := channel.MakeTimeout(dis.Timeout, a.storage)
-			if err := timeout.Wait(ctx); err != nil {
+			// Wait for the dispute timeout. If the channel has an app, extend the
+			// timeout by one challenge duration.
+			timeout := dis.Timeout
+			if !pchannel.IsNoApp(req.Params.App) {
+				timeout += req.Params.ChallengeDuration
+			}
+			chTimeout := channel.MakeTimeout(timeout, a.storage)
+			if err := chTimeout.Wait(ctx); err != nil {
 				return nil, err
 			}
 
