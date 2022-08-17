@@ -85,13 +85,13 @@ func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) er
 	defer sub.Close()
 
 	// Send and wait for TX finalization.
-	a.Log().WithField("cid", req.Tx.ID).WithField("version", req.Tx.Version).Debug("Progress")
+	a.Log().WithField("cid", req.Tx.ID).WithField("version", req.NewState.Version).Debug("Progress")
 	if err := a.call(ctx, ext); err != nil {
 		return err
 	}
 
 	// Wait for progressed event.
-	return a.waitForProgressed(ctx, sub, req.Tx.Version)
+	return a.waitForProgressed(ctx, sub, req.NewState.Version)
 }
 
 // dispute sends a dispute Ext and waits for the event.
