@@ -22,15 +22,16 @@ import (
 	pclient "perun.network/go-perun/client"
 	clienttest "perun.network/go-perun/client/test"
 	"perun.network/go-perun/wire"
+	pkgtest "polycry.pt/poly-go/test"
 
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
 	"github.com/perun-network/perun-polkadot-backend/wallet"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestHappyAliceBob(t *testing.T) {
+	rng := pkgtest.Prng(t)
 	s := test.NewSetup(t)
 	ctx, cancel := context.WithTimeout(context.Background(), TestTimeoutBlocks*s.BlockTime)
 	defer cancel()
@@ -45,7 +46,7 @@ func TestHappyAliceBob(t *testing.T) {
 		role [2]clienttest.Executer
 	)
 
-	setup := makeRoleSetups(s, name)
+	setup := makeRoleSetups(rng, s, name)
 	role[A] = clienttest.NewAlice(t, setup[A])
 	role[B] = clienttest.NewBob(t, setup[B])
 
@@ -72,7 +73,6 @@ func TestHappyAliceBob(t *testing.T) {
 		wallet.AsAddr(s.Bob.Acc.Address()).AccountID():   bobToAlice,
 	}
 	s.AssertBalanceChanges(deltas, epsilon, func() {
-		err := clienttest.ExecuteTwoPartyTest(ctx, role, execConfig)
-		assert.NoError(t, err)
+		clienttest.ExecuteTwoPartyTest(ctx, t, role, execConfig)
 	})
 }

@@ -19,7 +19,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	pkgtest "polycry.pt/poly-go/test"
 
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	wallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
@@ -40,19 +39,5 @@ func TestAddress_SS58Addr(t *testing.T) {
 			require.NoError(t, err)
 			assert.Equal(t, addr.Value, gotAddr)
 		}
-	}
-}
-
-// TestAddress_ZeroCmp tests that the zero address is strictly
-// smaller than all other addresses.
-func TestAddress_ZeroCmp(t *testing.T) {
-	rng := pkgtest.Prng(t)
-	r := test.NewRandomizer()
-	addr := r.NewRandomAddress(rng)
-	zero := test.NewAddressZero()
-
-	for i := 0; i < 1000; i++ {
-		require.False(t, addr.Cmp(zero) < 0)
-		require.False(t, zero.Cmp(addr) > 0)
 	}
 }
