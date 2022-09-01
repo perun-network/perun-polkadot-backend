@@ -60,6 +60,7 @@ func TestFunder_FundMultiple(t *testing.T) {
 func TestFunder_Timeout(t *testing.T) {
 	s := test.NewSetup(t)
 	params, state := s.NewRandomParamAndState()
+	params.ChallengeDuration = 10
 	dSetup := chtest.NewDepositSetup(params, state)
 
 	// Bob did not fund and times out.

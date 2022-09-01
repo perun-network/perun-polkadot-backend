@@ -16,6 +16,7 @@ package pallet
 
 import (
 	"context"
+	"time"
 
 	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
@@ -58,7 +59,9 @@ func (f *Funder) Fund(ctx context.Context, req pchannel.FundingReq) error {
 	}
 
 	// Wait for all Deposited events.
-	return f.waitForFundings(ctx, sub, req)
+	timeoutCtx, cancel := context.WithTimeout(ctx, time.Duration(req.Params.ChallengeDuration)*time.Second)
+	defer cancel()
+	return f.waitForFundings(timeoutCtx, sub, req)
 }
 
 // waitForFundings blocks until either; all fundings of the request were received or
@@ -70,7 +73,6 @@ func (f *Funder) waitForFundings(ctx context.Context, sub *EventSub, req pchanne
 		return err
 	}
 	f.Log().Tracef("Waiting for funding from %d peers", len(fids))
-	defer f.Log().Debug("All peers funded")
 
 	for len(fids) != 0 {
 		select {
