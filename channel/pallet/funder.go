@@ -73,7 +73,6 @@ func (f *Funder) waitForFundings(ctx context.Context, sub *EventSub, req pchanne
 		return err
 	}
 	f.Log().Tracef("Waiting for funding from %d peers", len(fids))
-	defer f.Log().Debug("All peers funded")
 
 	for len(fids) != 0 {
 		select {
