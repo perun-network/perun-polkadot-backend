@@ -18,6 +18,7 @@ import (
 	"context"
 	"math/big"
 	"testing"
+	"time"
 
 	"perun.network/go-perun/channel"
 	"perun.network/go-perun/client"
@@ -54,7 +55,7 @@ func TestAppChannel(t *testing.T) {
 		),
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), TestTimeoutBlocks*s.BlockTime)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	clienttest.ExecuteTwoPartyTest(ctx, t, roles, execConfig)
 }
