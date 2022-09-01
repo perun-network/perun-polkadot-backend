@@ -15,6 +15,7 @@
 package client_test
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
@@ -22,9 +23,10 @@ import (
 	clienttest "perun.network/go-perun/client/test"
 	"perun.network/go-perun/watcher/local"
 	"perun.network/go-perun/wire"
+	netwire "perun.network/go-perun/wire/net/simple"
 )
 
-func makeRoleSetups(s *test.Setup, names [2]string) (setup [2]clienttest.RoleSetup) {
+func makeRoleSetups(rng *rand.Rand, s *test.Setup, names [2]string) (setup [2]clienttest.RoleSetup) {
 	bus := wire.NewLocalBus()
 	for i := 0; i < len(setup); i++ {
 		watcher, err := local.NewWatcher(s.Adjs[i])
@@ -33,7 +35,7 @@ func makeRoleSetups(s *test.Setup, names [2]string) (setup [2]clienttest.RoleSet
 		}
 		setup[i] = clienttest.RoleSetup{
 			Name:              names[i],
-			Identity:          s.Accs[i].Acc,
+			Identity:          netwire.NewRandomAccount(rng),
 			Bus:               bus,
 			Funder:            s.Funders[i],
 			Adjudicator:       s.Adjs[i],

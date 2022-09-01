@@ -19,7 +19,6 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"perun.network/go-perun/channel"
 	"perun.network/go-perun/client"
 	clienttest "perun.network/go-perun/client/test"
@@ -32,8 +31,9 @@ import (
 )
 
 func TestAppChannel(t *testing.T) {
+	rng := pkgtest.Prng(t)
 	s := ptest.NewSetup(t)
-	setups := makeRoleSetups(s, [2]string{"Paul", "Paula"})
+	setups := makeRoleSetups(rng, s, [2]string{"Paul", "Paula"})
 
 	const A, B = 0, 1
 	roles := [2]clienttest.Executer{
@@ -41,7 +41,6 @@ func TestAppChannel(t *testing.T) {
 		clienttest.NewPaula(t, setups[B]),
 	}
 
-	rng := pkgtest.Prng(t)
 	appAddress := test.NewRandomAddress(rng)
 	app := channel.NewMockApp(appAddress)
 	channel.RegisterApp(app)
@@ -57,6 +56,5 @@ func TestAppChannel(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), TestTimeoutBlocks*s.BlockTime)
 	defer cancel()
-	err := clienttest.ExecuteTwoPartyTest(ctx, roles, execConfig)
-	assert.NoError(t, err)
+	clienttest.ExecuteTwoPartyTest(ctx, t, roles, execConfig)
 }
