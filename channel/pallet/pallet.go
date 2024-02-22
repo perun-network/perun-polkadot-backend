@@ -50,7 +50,7 @@ var (
 	// Conclude is the name of the conclude function of the pallet.
 	Conclude = substrate.NewExtName(PerunPallet, "conclude")
 	// ConcludeFinal is the name of the conclude_final function of the pallet.
-	ConcludeFinal = substrate.NewExtName(PerunPallet, "conclude_final")
+	ConcludeFinal = substrate.NewExtName(PerunPallet, "conclude")
 	// Withdraw is the name of the withdraw function of the pallet.
 	Withdraw = substrate.NewExtName(PerunPallet, "withdraw")
 

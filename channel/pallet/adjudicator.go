@@ -223,52 +223,21 @@ func (a *Adjudicator) Subscribe(ctx context.Context, cid pchannel.ID) (pchannel.
 
 // ensureConcluded ensures that a channel was concluded.
 func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.AdjudicatorReq) error {
-	// Indicates whether we can use concludeFinal.
-	concludeFinal := req.Tx.State.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) == nil
-
 	// Fetch on-chain dispute.
 	dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
-	if err != nil && !concludeFinal {
-		// If we couldn't retrieve the dispute state and we cannot use concludeFinal, we return the error.
-		return err
-	}
-
-	// If we could retrieve the dispute state, check phase and version.
-	if !errors.Is(err, ErrNoRegisteredState) {
-		if dis.State.Version > req.Tx.Version {
-			// The dispute version is greater than the request version.
-			return errors.WithMessagef(ErrReqVersionTooLow, "got %v, expected %v", req.Tx.Version, dis.State.Version)
-		} else if dis.Phase == channel.ConcludePhase {
-			if req.Tx.Version != dis.State.Version {
-				// The channel is concluded with a different version.
-				return ErrConcludedDifferentVersion
-			}
-			// The channel is already concluded with the expected version.
-			return nil
-		}
-	}
-
-	// Build the Extrinisic.
-	ext, err := func() (*types.Extrinsic, error) {
-		if !concludeFinal {
-			// Wait for the dispute timeout. If the channel has an app, extend the
-			// timeout by one challenge duration.
-			timeout := dis.Timeout
-			if !pchannel.IsNoApp(req.Params.App) {
-				timeout += req.Params.ChallengeDuration
-			}
-			chTimeout := channel.MakeTimeout(timeout, a.storage)
-			if err := chTimeout.Wait(ctx); err != nil {
-				return nil, err
-			}
-
-			return a.pallet.BuildConclude(a.onChain, req.Params)
-		}
-
-		return a.pallet.BuildConcludeFinal(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
-	}()
 	if err != nil {
-		return err
+		if errors.Is(err, ErrNoRegisteredState) {
+			dis = nil
+		} else {
+			return err
+		}
+	}
+	// Non-final states need to respect the dispute timeout, if there is a dispute.
+	if dis != nil && !req.Tx.IsFinal {
+		timeout := channel.MakeTimeout(dis.Timeout, a.storage)
+		if err := timeout.Wait(ctx); err != nil {
+			return err
+		}
 	}
 
 	// Setup the subscription for Concluded events.
@@ -277,12 +246,15 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 		return err
 	}
 	defer sub.Close()
-
+	// Build our conclude Extrinsic.
+	ext, err := a.pallet.BuildConcludeFinal(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
+	if err != nil {
+		return err
+	}
 	// Send the Extrinsic.
 	if err := a.call(ctx, ext); err != nil {
 		return err
 	}
-
 	// Wait for a concluded event that either we or some other party caused.
 	if err := a.waitForConcluded(ctx, sub, req.Tx.ID); err != nil {
 		return err
