@@ -120,11 +120,13 @@ func NewState(s *pchannel.State) (*State, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	data, err := s.Data.MarshalBinary()
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("NewState", s.ID, s.Version, bals, s.IsFinal, data)
+
 	return &State{
 		Channel:  s.ID,
 		Version:  s.Version,
