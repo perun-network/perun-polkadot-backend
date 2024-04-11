@@ -14,7 +14,7 @@
 
 package substrate
 
-import "github.com/centrifuge/go-substrate-rpc-client/v3/types"
+import "github.com/centrifuge/go-substrate-rpc-client/v4/types"
 
 // Pallet binds to a pallet that is deployed on a substrate chain.
 type Pallet struct {

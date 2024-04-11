@@ -19,7 +19,8 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types/codec"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"github.com/pkg/errors"
 	pchannel "perun.network/go-perun/channel"
@@ -28,12 +29,12 @@ import (
 
 // ScaleEncode encodes any struct according to the SCALE codec.
 func ScaleEncode(obj interface{}) ([]byte, error) {
-	return types.EncodeToBytes(obj)
+	return codec.Encode(obj)
 }
 
 // ScaleDecode decodes any struct according to the SCALE codec.
 func ScaleDecode(obj interface{}, data []byte) error {
-	return types.DecodeFromBytes(data, obj)
+	return codec.Decode(data, obj)
 }
 
 // MakeBalance creates a new Balance.

@@ -15,7 +15,7 @@
 package sr25519
 
 import (
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	pwallet "perun.network/go-perun/wallet"
 )

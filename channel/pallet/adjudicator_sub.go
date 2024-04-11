@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	pkg_sr25519 "github.com/perun-network/perun-polkadot-backend/pkg/sr25519"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"

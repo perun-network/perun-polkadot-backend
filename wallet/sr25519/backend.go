@@ -70,5 +70,5 @@ func (*Backend) VerifySignature(msg []byte, s pwallet.Sig, a pwallet.Address) (b
 		return false, err
 	}
 	context := schnorrkel.NewSigningContext(substrate.SignaturePrefix, msg)
-	return AsAddr(a).pk.Verify(sig, context), nil
+	return AsAddr(a).pk.Verify(sig, context)
 }
