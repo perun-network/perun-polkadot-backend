@@ -26,7 +26,7 @@ type Dot struct {
 
 const (
 	// PlankPerDot number of planks per Dot.
-	PlankPerDot = 1e12
+	PlankPerDot = 1e10
 	// PrintPrecision is the precision with which floats are printed
 	// as defined by big.Float.Text.
 	PrintPrecision = 3
