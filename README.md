@@ -33,7 +33,7 @@ cd perun-polkadot-backend
 2. Start a local Substrate node with the Perun Pallet installed. See the [polkadot node] repository for more details.
 
 ```sh
-docker run --rm -p 9944:9944 ghcr.io/perun-network/polkadot-test-node
+docker run --rm -p 9944:9944 ghcr.io/perun-network/polkadot-test-node:0.4.0
 ```
 
 3. Run the tests. This step needs a working [Go distribution](https://golang.org), see [go.mod](go.mod) for the required version.

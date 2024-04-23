@@ -2,8 +2,6 @@ module github.com/perun-network/perun-polkadot-backend
 
 go 1.21
 
-toolchain go1.21.4
-
 require (
 	github.com/ChainSafe/go-schnorrkel v1.1.0
 	github.com/centrifuge/go-substrate-rpc-client/v4 v4.2.1

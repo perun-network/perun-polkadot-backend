@@ -23,12 +23,14 @@ import (
 	"perun.network/go-perun/channel"
 	"perun.network/go-perun/client"
 	clienttest "perun.network/go-perun/client/test"
-	test "perun.network/go-perun/wallet/test"
 	"perun.network/go-perun/wire"
 	pkgtest "polycry.pt/poly-go/test"
 
+	"github.com/ChainSafe/go-schnorrkel"
 	pchannel "github.com/perun-network/perun-polkadot-backend/channel"
 	ptest "github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
+	dotwallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAppChannel(t *testing.T) {
@@ -42,7 +44,17 @@ func TestAppChannel(t *testing.T) {
 		clienttest.NewPaula(t, setups[B]),
 	}
 
-	appAddress := test.NewRandomAddress(rng)
+	byteArray := [32]byte{
+		176, 115, 108, 113, 171, 155, 245, 248,
+		27, 234, 80, 36, 30, 145, 56, 217,
+		213, 25, 176, 99, 145, 198, 217, 248,
+		220, 159, 39, 241, 120, 209, 175, 8,
+	}
+	pk, err := schnorrkel.NewPublicKey(byteArray)
+	require.NoError(t, err)
+
+	appAddress := dotwallet.NewAddressFromPK(pk)
+	require.NoError(t, err)
 	app := channel.NewMockApp(appAddress)
 	channel.RegisterApp(app)
 
