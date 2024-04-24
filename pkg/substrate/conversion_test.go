@@ -23,34 +23,34 @@ import (
 
 // TestDot_String tests the String() method in a non-exhaustive manner.
 func TestDot_String(t *testing.T) {
-	str := NewDotFromPlank(big.NewInt(0)).String()
-	assert.Equal(t, "0 Plank", str)
+	str := NewDotFromPlanck(big.NewInt(0)).String()
+	assert.Equal(t, "0 Planck", str)
 
-	str = NewDotFromPlank(big.NewInt(999)).String()
-	assert.Equal(t, "999.000 Plank", str)
-	str = NewDotFromPlank(big.NewInt(-999)).String()
-	assert.Equal(t, "-999.000 Plank", str)
+	str = NewDotFromPlanck(big.NewInt(999)).String()
+	assert.Equal(t, "999.000 Planck", str)
+	str = NewDotFromPlanck(big.NewInt(-999)).String()
+	assert.Equal(t, "-999.000 Planck", str)
 
-	str = NewDotFromPlank(big.NewInt(PlankPerDot)).String()
+	str = NewDotFromPlanck(big.NewInt(PlanckPerDot)).String()
 	assert.Equal(t, "1.000 Dot", str)
-	str = NewDotFromPlank(big.NewInt(-PlankPerDot)).String()
+	str = NewDotFromPlanck(big.NewInt(-PlanckPerDot)).String()
 	assert.Equal(t, "-1.000 Dot", str)
 
-	str = NewDotFromPlank(big.NewInt(PlankPerDot / 2)).String()
+	str = NewDotFromPlanck(big.NewInt(PlanckPerDot / 2)).String()
 	assert.Equal(t, "500.000 mDot", str)
-	str = NewDotFromPlank(big.NewInt(PlankPerDot / -2)).String()
+	str = NewDotFromPlanck(big.NewInt(PlanckPerDot / -2)).String()
 	assert.Equal(t, "-500.000 mDot", str)
 
-	str = NewDotFromPlank(big.NewInt(PlankPerDot * 2000000)).String()
+	str = NewDotFromPlanck(big.NewInt(PlanckPerDot * 2000000)).String()
 	assert.Equal(t, "2.000 MDot", str)
-	str = NewDotFromPlank(big.NewInt(PlankPerDot * -2000000)).String()
+	str = NewDotFromPlanck(big.NewInt(PlanckPerDot * -2000000)).String()
 	assert.Equal(t, "-2.000 MDot", str)
 }
 
 func TestDot_Abs(t *testing.T) {
-	dot := NewDotFromPlank(big.NewInt(-10))
+	dot := NewDotFromPlanck(big.NewInt(-10))
 	abs := dot.Abs()
 
 	assert.NotEqual(t, abs, dot)
-	assert.Equal(t, abs, NewDotFromPlank(big.NewInt(10)))
+	assert.Equal(t, abs, NewDotFromPlanck(big.NewInt(10)))
 }

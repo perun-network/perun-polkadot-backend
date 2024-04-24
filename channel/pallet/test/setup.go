@@ -131,7 +131,7 @@ func (s *Setup) AssertBalanceChanges(deltas map[types.AccountID]*big.Int, epsilo
 	for addr, delta := range deltas {
 		gotDelta := new(big.Int).Sub(before[addr], after[addr])
 		gotEpsilon := new(big.Int).Sub(delta, gotDelta)
-		msg := fmt.Sprintf("Addr: 0x%x, gotDelta: %v, wantDelta: %v, gotEps: %v, wantEps: %v", addr, substrate.NewDotFromPlank(gotDelta), substrate.NewDotFromPlank(delta), substrate.NewDotFromPlank(gotEpsilon), substrate.NewDotFromPlank(epsilon))
+		msg := fmt.Sprintf("Addr: 0x%x, gotDelta: %v, wantDelta: %v, gotEps: %v, wantEps: %v", addr, substrate.NewDotFromPlanck(gotDelta), substrate.NewDotFromPlanck(delta), substrate.NewDotFromPlanck(gotEpsilon), substrate.NewDotFromPlanck(epsilon))
 		require.True(s.T, gotEpsilon.CmpAbs(epsilon) <= 0, msg)
 	}
 }

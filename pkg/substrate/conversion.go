@@ -21,27 +21,27 @@ import (
 
 // Dot wraps a *big.Int and provides conversion and formatting for Dot values.
 type Dot struct {
-	plank *big.Int
+	planck *big.Int
 }
 
 const (
-	// PlankPerDot number of planks per Dot.
-	PlankPerDot = 1e10
+	// PlanckPerDot number of plancks per Dot.
+	PlanckPerDot = 1e10
 	// PrintPrecision is the precision with which floats are printed
 	// as defined by big.Float.Text.
 	PrintPrecision = 3
 )
 
-// NewDotFromPlank creates a new Dot from the given amount of Planks.
-func NewDotFromPlank(plank *big.Int) *Dot {
-	return &Dot{plank}
+// NewDotFromPlanck creates a new Dot from the given amount of Plancks.
+func NewDotFromPlanck(planck *big.Int) *Dot {
+	return &Dot{planck}
 }
 
-// NewDotsFromPlanks creates new Dots from the given amounts of Planks.
-func NewDotsFromPlanks(plank ...*big.Int) []*Dot {
-	ret := make([]*Dot, len(plank))
-	for i, p := range plank {
-		ret[i] = NewDotFromPlank(p)
+// NewDotsFromPlancks creates new Dots from the given amounts of Plancks.
+func NewDotsFromPlancks(planck ...*big.Int) []*Dot {
+	ret := make([]*Dot, len(planck))
+	for i, p := range planck {
+		ret[i] = NewDotFromPlanck(p)
 	}
 	return ret
 }
@@ -53,34 +53,34 @@ func (d *Dot) String() string {
 		thresh *big.Float
 		prefix string
 	}{
-		{big.NewFloat(PlankPerDot * 1e6), "MDot"},
-		{big.NewFloat(PlankPerDot * 1e3), "KDot"},
-		{big.NewFloat(PlankPerDot), "Dot"},
-		{big.NewFloat(PlankPerDot / 1e3), "mDot"},
-		{big.NewFloat(PlankPerDot / 1e6), "uDot"},
-		{big.NewFloat(1), "Plank"},
+		{big.NewFloat(PlanckPerDot * 1e6), "MDot"},
+		{big.NewFloat(PlanckPerDot * 1e3), "KDot"},
+		{big.NewFloat(PlanckPerDot), "Dot"},
+		{big.NewFloat(PlanckPerDot / 1e3), "mDot"},
+		{big.NewFloat(PlanckPerDot / 1e6), "uDot"},
+		{big.NewFloat(1), "Planck"},
 	}
 
-	plank := new(big.Float).SetInt(d.plank)
-	plankAbs := new(big.Float).Abs(plank)
+	planck := new(big.Float).SetInt(d.planck)
+	planckAbs := new(big.Float).Abs(planck)
 	for _, prefix := range prefices {
-		if plankAbs.Cmp(prefix.thresh) >= 0 {
-			value := new(big.Float).Quo(plank, prefix.thresh)
+		if planckAbs.Cmp(prefix.thresh) >= 0 {
+			value := new(big.Float).Quo(planck, prefix.thresh)
 			return fmt.Sprintf("%s %s", formatFloat(value), prefix.prefix)
 		}
 	}
 
-	return "0 Plank"
+	return "0 Planck"
 }
 
-// Plank converts a Dot to Planks.
-func (d *Dot) Plank() *big.Int {
-	return new(big.Int).Set(d.plank)
+// Planck converts a Dot to Plancks.
+func (d *Dot) Planck() *big.Int {
+	return new(big.Int).Set(d.planck)
 }
 
 // Abs returns the absolute value.
 func (d *Dot) Abs() *Dot {
-	return NewDotFromPlank(new(big.Int).Abs(d.plank))
+	return NewDotFromPlanck(new(big.Int).Abs(d.planck))
 }
 
 func formatFloat(f *big.Float) string {
