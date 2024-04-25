@@ -15,7 +15,9 @@
 package pallet
 
 import (
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"io"
+
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"perun.network/go-perun/log"
 	pkgsync "polycry.pt/poly-go/sync"
 
@@ -60,6 +62,9 @@ func NewEventSub(source *substrate.EventSource, meta *types.Metadata, p EventPre
 			select {
 			case set := <-source.Events():
 				if err = sub.decodeEventRecords(set, meta); err != nil {
+					if err == io.EOF {
+						continue
+					}
 					sub.Log().Errorf("decoding event records: %v", err)
 					break loop
 				}

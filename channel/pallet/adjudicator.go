@@ -17,7 +17,7 @@ package pallet
 import (
 	"context"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/pkg/errors"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"

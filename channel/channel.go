@@ -17,7 +17,7 @@ package channel
 import (
 	"math/big"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	pchannel "perun.network/go-perun/channel"

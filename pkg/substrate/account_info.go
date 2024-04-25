@@ -14,7 +14,7 @@
 
 package substrate
 
-import "github.com/centrifuge/go-substrate-rpc-client/v3/types"
+import "github.com/centrifuge/go-substrate-rpc-client/v4/types"
 
 // AccountInfo replaces substrate.AccountInfo since it is outdated.
 // This is advised by the GSRPC team.

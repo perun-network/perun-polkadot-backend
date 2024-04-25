@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/config"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/config"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"github.com/stretchr/testify/require"
 )

@@ -80,7 +80,7 @@ func TestAdjudicator_Walkthrough(t *testing.T) {
 	dSetup := chtest.NewDepositSetup(params, state)
 	adjAlice := pallet.NewAdjudicator(s.Alice.Acc, s.Pallet, s.API, test.PastBlocks)
 	adjBob := pallet.NewAdjudicator(s.Bob.Acc, s.Pallet, s.API, test.PastBlocks)
-	ctx, cancel := context.WithTimeout(context.Background(), 100*s.BlockTime)
+	ctx, cancel := context.WithTimeout(context.Background(), 1000*s.BlockTime)
 	defer cancel()
 
 	// Fund

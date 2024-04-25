@@ -18,10 +18,10 @@ import (
 	"math/big"
 	"sync"
 
-	gsrpc "github.com/centrifuge/go-substrate-rpc-client/v3"
-	"github.com/centrifuge/go-substrate-rpc-client/v3/rpc/chain"
-	"github.com/centrifuge/go-substrate-rpc-client/v3/rpc/state"
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	gsrpc "github.com/centrifuge/go-substrate-rpc-client/v4"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/rpc/chain"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/rpc/state"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/pkg/errors"
 	"perun.network/go-perun/log"
 )

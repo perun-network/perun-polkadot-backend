@@ -16,9 +16,8 @@ package substrate
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/pkg/errors"
 )
 
@@ -36,26 +35,22 @@ func DecodeError(meta *types.Metadata, err types.DispatchError) error {
 	if !ok {
 		return errors.Wrap(ErrUnknownError, "wrong meta data version")
 	}
-	if !err.HasModule {
-		return errors.Wrap(ErrUnknownError, "no module in error")
+	if err.IsToken {
+		return errors.Wrap(ErrCallFailed, "token error")
+
 	}
-	if int(err.Module) >= len(metaV.Modules) {
-		return errors.Wrap(ErrUnknownError, "module index out of range")
+	if !err.IsModule {
+		return errors.Wrap(ErrUnknownError, "not module error")
 	}
-	module := metaV.Modules[err.Module]
-	if int(err.Error) >= len(module.Errors) {
-		return errors.Wrap(ErrUnknownError, "error index out of range")
+	metaDataErr, findErr := metaV.FindError(err.ModuleError.Index, err.ModuleError.Error)
+	if findErr != nil {
+		return errors.Wrap(ErrUnknownError, findErr.Error())
 	}
-	e := module.Errors[err.Error]
-	return errors.Wrap(ErrCallFailed, formatErrorMeta(e))
+	return errors.Wrap(ErrCallFailed, formatErrorMeta(metaDataErr))
 }
 
-// formatErrorMeta formats an ErrorMetaDataV8 into a human-readable form.
-func formatErrorMeta(err types.ErrorMetadataV8) string {
-	docs := make([]string, len(err.Documentation))
-	for i, doc := range err.Documentation {
-		docs[i] = string(doc)
-	}
+// formatErrorMeta formats an MetadataError into a human-readable form.
+func formatErrorMeta(err *types.MetadataError) string {
 
-	return fmt.Sprintf("%s:%s", err.Name, strings.Join(docs, ", "))
+	return fmt.Sprintf("%s:%s", err.Name, err.Value)
 }

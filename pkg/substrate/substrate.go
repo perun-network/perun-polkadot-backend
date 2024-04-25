@@ -15,8 +15,8 @@
 package substrate
 
 import (
-	"github.com/centrifuge/go-substrate-rpc-client/v3/rpc/state"
-	gsrpc "github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/rpc/state"
+	gsrpc "github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/vedhavyas/go-subkey"
 )
 
@@ -67,9 +67,9 @@ func SS58Address(addr gsrpc.AccountID, network NetworkID) (string, error) {
 // Meta returns the expected metadata and a success bool.
 // Can be used to check whether the connected substrate node
 // is running the right version.
-func Meta(meta *gsrpc.Metadata) (*gsrpc.MetadataV13, bool) {
-	if !meta.IsMetadataV13 {
+func Meta(meta *gsrpc.Metadata) (*gsrpc.MetadataV14, bool) {
+	if !(meta.Version == 14) {
 		return nil, false
 	}
-	return &meta.AsMetadataV13, true
+	return &meta.AsMetadataV14, true
 }

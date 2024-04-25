@@ -24,7 +24,7 @@ import (
 	"perun.network/go-perun/wire"
 	pkgtest "polycry.pt/poly-go/test"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
 	"github.com/perun-network/perun-polkadot-backend/wallet"

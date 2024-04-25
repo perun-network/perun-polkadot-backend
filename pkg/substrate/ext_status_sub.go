@@ -17,8 +17,8 @@ package substrate
 import (
 	"context"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/rpc/author"
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/rpc/author"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/pkg/errors"
 	"perun.network/go-perun/log"
 	pkgsync "polycry.pt/poly-go/sync"

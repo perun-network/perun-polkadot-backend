@@ -18,7 +18,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types/codec"
 	"perun.network/go-perun/log"
 )
 
@@ -110,7 +110,7 @@ func (t *Timeout) pollTime() (time.Time, error) {
 	}
 
 	var now TimePoint
-	if err := types.DecodeFromBytes(_now.StorageData, &now); err != nil {
+	if err := codec.Decode(_now.StorageData, &now); err != nil {
 		return time.Unix(0, 0), err
 	}
 	unixNow := time.Unix(int64(now/1000), 0)

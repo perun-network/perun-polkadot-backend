@@ -16,7 +16,7 @@ package sr25519
 
 import (
 	"github.com/ChainSafe/go-schnorrkel"
-	gsrpcsig "github.com/centrifuge/go-substrate-rpc-client/v3/signature"
+	gsrpcsig "github.com/centrifuge/go-substrate-rpc-client/v4/signature"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
@@ -40,6 +40,6 @@ func makeKeyPair(msk *schnorrkel.MiniSecretKey) keyPair {
 // keyRing returns the receiver as gsrpc.KeyringPair.
 func (kp *keyPair) keyRing(net substrate.NetworkID) (gsrpcsig.KeyringPair, error) {
 	msk := kp.msk.Encode()
-	pair, err := gsrpcsig.KeyringPairFromSecret(hexutil.Encode(msk[:]), uint8(net))
+	pair, err := gsrpcsig.KeyringPairFromSecret(hexutil.Encode(msk[:]), uint16(net))
 	return pair, err
 }

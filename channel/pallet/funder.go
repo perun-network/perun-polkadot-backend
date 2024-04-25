@@ -18,7 +18,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/centrifuge/go-substrate-rpc-client/v3/types"
+	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"
