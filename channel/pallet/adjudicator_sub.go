@@ -1,4 +1,4 @@
-// Copyright 2021 PolyCrypt GmbH
+// Copyright 2024 PolyCrypt GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -133,12 +133,18 @@ func (s *AdjudicatorSub) makePerunEvent(event channel.PerunEvent) (pchannel.Adju
 			return nil, err
 		}
 
-		appPK, err := pkg_sr25519.NewPK(event.App[:])
+		appPK, err := pkg_sr25519.NewPK(event.App.OffIdentity[:])
 		if err != nil {
 			return nil, err
 		}
 		appAddr := sr25519.NewAddressFromPK(appPK)
-		app, err := pchannel.Resolve(appAddr)
+		appIdent, err := appAddr.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
+		var offIdentity channel.OffIdentity
+		copy(offIdentity[:], appIdent)
+		app, err := pchannel.Resolve(&channel.AppID{OffIdentity: offIdentity})
 		if err != nil {
 			return nil, err
 		}

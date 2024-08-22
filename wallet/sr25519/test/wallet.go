@@ -1,4 +1,4 @@
-// Copyright 2021 PolyCrypt GmbH
+// Copyright 2024 PolyCrypt GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,6 +48,13 @@ func (w *Wallet) NewRandomAccount(rng *rand.Rand) pwallet.Account {
 // other addresses.
 func NewAddressZero() *sr25519.Address {
 	return sr25519.NewAddressFromPK(ZeroPK())
+}
+func NewRandomAddress(rng *rand.Rand) pwallet.Address {
+	pk, err := pkgsr25519.NewPKFromRng(rng)
+	if err != nil {
+		panic(err)
+	}
+	return sr25519.NewAddressFromPK(pk)
 }
 
 // ZeroPK returns a PK that can be used to create a zero address.

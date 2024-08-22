@@ -1,4 +1,4 @@
-// Copyright 2021 PolyCrypt GmbH
+// Copyright 2024 PolyCrypt GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -195,19 +195,24 @@ func NewParams(p *pchannel.Params) (*Params, error) {
 		return nil, err
 	}
 
-	var appID OffIdentity
+	var appDef AppID
 	if !pchannel.IsNoApp(p.App) {
-		appID, err = MakeOffIdent(p.App.Def())
-		if err != nil {
-			return nil, err
+		var ok bool
+		appDefPtr, ok := p.App.Def().(*AppID)
+		if !ok {
+			panic("appDef is not of type *AppID")
 		}
+		appDef = *appDefPtr
+
+	} else {
+		appDef = AppID{OffIdentity: [32]byte{}}
 	}
 
 	return &Params{
 		Nonce:             nonce,
 		Participants:      parts,
 		ChallengeDuration: MakeChallengeDuration(p.ChallengeDuration),
-		App:               appID,
+		App:               appDef,
 	}, err
 }
 
