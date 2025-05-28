@@ -1,4 +1,4 @@
-// Copyright 2021 PolyCrypt GmbH
+// Copyright 2024 PolyCrypt GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ package channel
 
 import (
 	"fmt"
-	"log"
-
 	eth "github.com/ethereum/go-ethereum/crypto"
+	dotwallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
+	"log"
 	pchannel "perun.network/go-perun/channel"
 	pwallet "perun.network/go-perun/wallet"
 )
@@ -79,4 +79,17 @@ func CalcID(params *pchannel.Params) (id pchannel.ID) {
 		log.Panicf("could not encode parameters: %v", err)
 	}
 	return eth.Keccak256Hash(bytes)
+}
+
+// NewAppID creates a new app identifier
+func (b *backend) NewAppID() pchannel.AppID {
+	addr := &dotwallet.Address{}
+	appIdent, err := addr.MarshalBinary()
+	if err != nil {
+		panic(err)
+	}
+
+	var offIdentity OffIdentity
+	copy(offIdentity[:], appIdent)
+	return &AppID{offIdentity}
 }

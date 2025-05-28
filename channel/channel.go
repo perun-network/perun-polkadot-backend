@@ -1,4 +1,4 @@
-// Copyright 2021 PolyCrypt GmbH
+// Copyright 2024 PolyCrypt GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,8 +63,6 @@ type (
 	Balance = types.U128
 	// Sig is an off-chain signature.
 	Sig = [SigLen]byte
-	// AppID is the identifier of a channel application.
-	AppID = OffIdentity
 
 	// Params holds the fixed parameters of a channel and uniquely identifies it.
 	Params struct {

@@ -1,4 +1,4 @@
-// Copyright 2022 - See NOTICE file for copyright holders.
+// Copyright 2024 - See NOTICE file for copyright holders.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,14 @@ func TestAppChannel(t *testing.T) {
 
 	appAddress := dotwallet.NewAddressFromPK(pk)
 	require.NoError(t, err)
-	app := channel.NewMockApp(appAddress)
+
+	appIdent, err := appAddress.MarshalBinary()
+	require.NoError(t, err)
+
+	var offIdentity pchannel.OffIdentity
+	copy(offIdentity[:], appIdent)
+
+	app := channel.NewMockApp(&pchannel.AppID{OffIdentity: offIdentity})
 	channel.RegisterApp(app)
 
 	execConfig := &clienttest.ProgressionExecConfig{
