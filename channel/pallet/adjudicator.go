@@ -83,7 +83,7 @@ func (a *Adjudicator) Progress(ctx context.Context, req pchannel.ProgressReq) er
 	if err != nil {
 		return err
 	}
-	defer sub.Close()
+	defer sub.Close() //nolint:errcheck
 
 	// Send and wait for TX finalization.
 	a.Log().WithField("cid", req.Tx.ID).WithField("version", req.NewState.Version).Debug("Progress")
@@ -104,7 +104,7 @@ func (a *Adjudicator) dispute(ctx context.Context, req pchannel.AdjudicatorReq) 
 	if err != nil {
 		return err
 	}
-	defer sub.Close()
+	defer sub.Close() //nolint:errcheck
 	// Build Dispute Tx.
 	ext, err := a.pallet.BuildDispute(a.onChain, req.Params, req.Tx.State, req.Tx.Sigs)
 	if err != nil {
@@ -225,7 +225,7 @@ func (a *Adjudicator) Subscribe(ctx context.Context, cid pchannel.ID) (pchannel.
 // ensureConcluded ensures that a channel was concluded.
 func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.AdjudicatorReq) error {
 	// Indicates whether we can use concludeFinal.
-	concludeFinal := req.Tx.State.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) == nil
+	concludeFinal := req.Tx.IsFinal && fullySignedTx(req.Tx, req.Params.Parts) == nil
 
 	// Fetch on-chain dispute.
 	dis, err := a.pallet.QueryStateRegister(req.Params.ID(), a.storage, a.pastBlocks)
@@ -277,7 +277,7 @@ func (a *Adjudicator) ensureConcluded(ctx context.Context, req pchannel.Adjudica
 	if err != nil {
 		return err
 	}
-	defer sub.Close()
+	defer sub.Close() //nolint:errcheck
 
 	// Send the Extrinsic.
 	if err := a.call(ctx, ext); err != nil {

@@ -99,7 +99,7 @@ loop:
 	event, err := s.makePerunEvent(last)
 	if err != nil {
 		s.err <- err
-		if err := s.Closer.Close(); err != nil {
+		if err := s.Close(); err != nil {
 			s.Log().WithError(err).Error("Could not close Closer.")
 		}
 		return nil

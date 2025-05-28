@@ -54,7 +54,12 @@ func NewEventSub(source *substrate.EventSource, meta *types.Metadata, p EventPre
 	go func() {
 		sub.Log().Debug("EventSub started")
 		defer sub.Log().Debug("EventSub stopped")
-		defer sub.Close()
+		defer func() {
+			err := sub.Close()
+			if err != nil {
+				sub.Log().WithError(err).Error("Could not close EventSub.")
+			}
+		}()
 
 		var err error
 	loop:

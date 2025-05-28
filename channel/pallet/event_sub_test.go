@@ -59,7 +59,7 @@ func TestPalletEventSub_Deposit(t *testing.T) {
 		absolute := new(big.Int).Mul(aliceBal, big.NewInt(int64(i+1)))
 		require.Equal(t, channel.MakePerunBalance(event.Balance), absolute)
 	}
-	sub.Close()
+	sub.Close() //nolint:errcheck
 	assert.NoError(t, <-sub.Err())
 }
 

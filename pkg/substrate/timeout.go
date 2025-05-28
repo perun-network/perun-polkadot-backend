@@ -73,7 +73,7 @@ func (t *Timeout) IsElapsed(context.Context) bool {
 		return false
 	}
 	// Check for elapsed. There is no t.Cmp, so use an or here.
-	elapsed := t.when.Before(now) || t.when == now
+	elapsed := t.when.Before(now) || t.when.Equal(now)
 	// Fancy logging.
 	if delta := now.Sub(t.when); elapsed {
 		t.Log().Tracef("Timeout elapsed since %v", delta)

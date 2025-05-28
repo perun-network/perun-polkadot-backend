@@ -111,7 +111,9 @@ func (s *EventSource) init(keys []types.StorageKey, pastBlocks types.BlockNumber
 	// Listen to all future events.
 	go func() {
 		defer close(s.err)
-		defer s.Close()
+		defer func() {
+			err = s.Close()
+		}()
 
 		for {
 			select {

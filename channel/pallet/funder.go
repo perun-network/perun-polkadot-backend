@@ -48,7 +48,9 @@ func (f *Funder) Fund(ctx context.Context, req pchannel.FundingReq) error {
 	if err != nil {
 		return err
 	}
-	defer sub.Close()
+	defer func() {
+		err = sub.Close()
+	}()
 
 	// Deposit our funds.
 	wReq, err := NewDepositReqFromPerun(&req, f.acc)

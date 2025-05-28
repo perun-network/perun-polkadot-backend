@@ -68,7 +68,7 @@ func SS58Address(addr gsrpc.AccountID, network NetworkID) (string, error) {
 // Can be used to check whether the connected substrate node
 // is running the right version.
 func Meta(meta *gsrpc.Metadata) (*gsrpc.MetadataV14, bool) {
-	if !(meta.Version == 14) {
+	if meta.Version != 14 {
 		return nil, false
 	}
 	return &meta.AsMetadataV14, true
