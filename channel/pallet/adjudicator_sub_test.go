@@ -30,6 +30,7 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
 	chtest "github.com/perun-network/perun-polkadot-backend/channel/test"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 )
 
 func TestAdjudicatorSub_Register(t *testing.T) {
@@ -92,7 +93,9 @@ func newAdjReq(s *test.Setup, final bool) (pchannel.AdjudicatorReq, *pchannel.Pa
 	var data [20]byte
 	s.Rng.Read(data[:])
 	nonce := pchannel.NonceFromBytes(data[:])
-	params, err := pchannel.NewParams(60, []pwallet.Address{s.Alice.Acc.Address(), s.Bob.Acc.Address()}, pchannel.NoApp(), nonce, true, false)
+	params, err := pchannel.NewParams(60, []map[pwallet.BackendID]pwallet.Address{
+		{wallet.BackendID: s.Alice.Acc.Address()},
+		{wallet.BackendID: s.Bob.Acc.Address()}}, pchannel.NoApp(), nonce, true, false)
 	require.NoError(s.T, err)
 	state.ID = params.ID()
 	wState, err := channel.NewState(state)
@@ -100,7 +103,7 @@ func newAdjReq(s *test.Setup, final bool) (pchannel.AdjudicatorReq, *pchannel.Pa
 	sigs := s.SignState(wState)
 	req := pchannel.AdjudicatorReq{
 		Params:    params,
-		Acc:       s.Alice.Acc,
+		Acc:       map[pwallet.BackendID]pwallet.Account{wallet.BackendID: s.Alice.Acc},
 		Tx:        pchannel.Transaction{State: state, Sigs: sigs},
 		Idx:       0,
 		Secondary: false,

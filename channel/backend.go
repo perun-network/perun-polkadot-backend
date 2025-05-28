@@ -16,9 +16,9 @@ package channel
 
 import (
 	"fmt"
+
 	eth "github.com/ethereum/go-ethereum/crypto"
 	dotwallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
-	"log"
 	pchannel "perun.network/go-perun/channel"
 	pwallet "perun.network/go-perun/wallet"
 )
@@ -32,7 +32,7 @@ type backend struct{}
 var Backend backend
 
 // CalcID calculates the channelID.
-func (*backend) CalcID(params *pchannel.Params) (id pchannel.ID) {
+func (*backend) CalcID(params *pchannel.Params) (id pchannel.ID, err error) {
 	return CalcID(params)
 }
 
@@ -69,27 +69,27 @@ func (*backend) NewAsset() pchannel.Asset {
 }
 
 // CalcID calculates the channelID by encoding and hashing the params.
-func CalcID(params *pchannel.Params) (id pchannel.ID) {
+func CalcID(params *pchannel.Params) (id pchannel.ID, err error) {
 	_params, err := NewParams(params)
 	if err != nil {
-		panic(fmt.Sprintf("cannot calculate channel ID: %v", err))
+		return id, fmt.Errorf("cannot calculate channel ID: %v", err)
 	}
 	bytes, err := ScaleEncode(_params)
 	if err != nil {
-		log.Panicf("could not encode parameters: %v", err)
+		return id, fmt.Errorf("could not encode parameters: %v", err)
 	}
-	return eth.Keccak256Hash(bytes)
+	return eth.Keccak256Hash(bytes), nil
 }
 
 // NewAppID creates a new app identifier
-func (b *backend) NewAppID() pchannel.AppID {
+func (b *backend) NewAppID() (pchannel.AppID, error) {
 	addr := &dotwallet.Address{}
 	appIdent, err := addr.MarshalBinary()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("could not marshal app address: %w", err)
 	}
 
 	var offIdentity OffIdentity
 	copy(offIdentity[:], appIdent)
-	return &AppID{offIdentity}
+	return &AppID{offIdentity}, nil
 }

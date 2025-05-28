@@ -25,6 +25,7 @@ import (
 
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 )
 
 // Adjudicator implements the Perun Adjudicator interface.
@@ -209,7 +210,7 @@ func (a *Adjudicator) Withdraw(ctx context.Context, req pchannel.AdjudicatorReq,
 
 // withdraw sends and waits for a withdrawal extrinsic.
 func (a *Adjudicator) withdraw(ctx context.Context, req pchannel.AdjudicatorReq) error {
-	ext, err := a.pallet.BuildWithdraw(a.onChain, req.Acc, req.Tx.ID)
+	ext, err := a.pallet.BuildWithdraw(a.onChain, req.Acc[wallet.BackendID], req.Tx.ID)
 	if err != nil {
 		return err
 	}
@@ -351,13 +352,13 @@ func (*Adjudicator) checkRegister(req pchannel.AdjudicatorReq, states []pchannel
 	}
 }
 
-func fullySignedTx(tx pchannel.Transaction, parts []pwallet.Address) error {
+func fullySignedTx(tx pchannel.Transaction, parts []map[pwallet.BackendID]pwallet.Address) error {
 	if len(tx.Sigs) != len(parts) {
 		return errors.Errorf("wrong number of signatures")
 	}
 
 	for i, p := range parts {
-		if ok, err := pchannel.Verify(p, tx.State, tx.Sigs[i]); err != nil {
+		if ok, err := pchannel.Verify(p[wallet.BackendID], tx.State, tx.Sigs[i]); err != nil {
 			return errors.WithMessagef(err, "verifying signature[%d]", i)
 		} else if !ok {
 			return errors.Errorf("invalid signature[%d]", i)

@@ -29,8 +29,10 @@ import (
 	"github.com/ChainSafe/go-schnorrkel"
 	pchannel "github.com/perun-network/perun-polkadot-backend/channel"
 	ptest "github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	dotwallet "github.com/perun-network/perun-polkadot-backend/wallet/sr25519"
 	"github.com/stretchr/testify/require"
+	pwallet "perun.network/go-perun/wallet"
 )
 
 func TestAppChannel(t *testing.T) {
@@ -67,8 +69,9 @@ func TestAppChannel(t *testing.T) {
 
 	execConfig := &clienttest.ProgressionExecConfig{
 		BaseExecConfig: clienttest.MakeBaseExecConfig(
-			[2]wire.Address{setups[A].Identity.Address(), setups[B].Identity.Address()},
+			[2]map[pwallet.BackendID]wire.Address{wire.AddressMapfromAccountMap(setups[A].Identity), wire.AddressMapfromAccountMap(setups[B].Identity)},
 			pchannel.Asset,
+			wallet.BackendID,
 			[2]*big.Int{big.NewInt(100000000000000), big.NewInt(100000000000000)},
 			client.WithApp(app, channel.NewMockOp(channel.OpValid)),
 		),

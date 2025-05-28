@@ -21,11 +21,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	pchannel "perun.network/go-perun/channel"
+	pwallet "perun.network/go-perun/wallet"
 
 	"github.com/perun-network/perun-polkadot-backend/channel"
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet"
 	"github.com/perun-network/perun-polkadot-backend/channel/pallet/test"
 	chtest "github.com/perun-network/perun-polkadot-backend/channel/test"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 )
 
 func TestAdjudicator_NotRegistered(t *testing.T) {
@@ -68,7 +70,7 @@ func TestAdjudicator_ConcludeFinal(t *testing.T) {
 		adj := pallet.NewAdjudicator(s.Alice.Acc, s.Pallet, s.API, test.PastBlocks)
 		assert.NoError(t, adj.Withdraw(ctx, req, nil))
 		req.Idx = 1
-		req.Acc = s.Bob.Acc
+		req.Acc = map[pwallet.BackendID]pwallet.Account{wallet.BackendID: s.Bob.Acc}
 		adj = pallet.NewAdjudicator(s.Bob.Acc, s.Pallet, s.API, test.PastBlocks)
 		assert.NoError(t, adj.Withdraw(ctx, req, nil))
 	}
@@ -99,7 +101,7 @@ func TestAdjudicator_Walkthrough(t *testing.T) {
 		_next, err := channel.NewState(next)
 		require.NoError(t, err)
 		sigs := s.SignState(_next)
-		req.Acc = s.Bob.Acc
+		req.Acc = map[pwallet.BackendID]pwallet.Account{wallet.BackendID: s.Bob.Acc}
 		req.Tx = pchannel.Transaction{State: next, Sigs: sigs}
 		req.Idx = 1
 		require.NoError(t, adjBob.Register(ctx, req, nil))
@@ -120,7 +122,7 @@ func TestAdjudicator_Walkthrough(t *testing.T) {
 
 		// Alice
 		req.Idx = 0
-		req.Acc = s.Alice.Acc
+		req.Acc = map[pwallet.BackendID]pwallet.Account{wallet.BackendID: s.Alice.Acc}
 		require.NoError(t, adjAlice.Withdraw(ctx, req, nil))
 	}
 }

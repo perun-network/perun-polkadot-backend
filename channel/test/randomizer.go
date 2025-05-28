@@ -19,6 +19,7 @@ import (
 	"math/rand"
 
 	"github.com/perun-network/perun-polkadot-backend/channel"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	pchannel "perun.network/go-perun/channel"
 	pchtest "perun.network/go-perun/channel/test"
 )
@@ -51,5 +52,6 @@ func DefaultRandomOpts() pchtest.RandomOpt {
 		Append(pchtest.WithoutApp()).
 		Append(pchtest.WithNumLocked(0)).
 		Append(pchtest.WithAssets(channel.Asset)).
-		Append(pchtest.WithNumParts(2))
+		Append(pchtest.WithNumParts(2)).
+		Append(pchtest.WithBackend(wallet.BackendID))
 }

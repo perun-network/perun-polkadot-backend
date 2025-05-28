@@ -61,7 +61,7 @@ var SignaturePrefix = []byte("substrate")
 
 // SS58Address returns the SS58 of an Address for a specific network.
 func SS58Address(addr gsrpc.AccountID, network NetworkID) (string, error) {
-	return subkey.SS58Address(addr[:], uint8(network))
+	return subkey.SS58Encode(addr[:], uint16(network)), nil
 }
 
 // Meta returns the expected metadata and a success bool.

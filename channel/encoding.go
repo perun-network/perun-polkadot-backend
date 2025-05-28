@@ -22,6 +22,7 @@ import (
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types/codec"
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	"github.com/pkg/errors"
 	pchannel "perun.network/go-perun/channel"
 	pwallet "perun.network/go-perun/wallet"
@@ -244,7 +245,7 @@ func MakeSigs(sigs []pwallet.Sig) ([]Sig, error) {
 
 // MakeFundingReq creates a new Funding.
 func MakeFundingReq(req *pchannel.FundingReq) (Funding, error) {
-	ident, err := MakeOffIdent(req.Params.Parts[req.Idx])
+	ident, err := MakeOffIdent(req.Params.Parts[req.Idx][wallet.BackendID])
 
 	return Funding{
 		req.State.ID,
@@ -285,12 +286,12 @@ func MakeOffIdent(part pwallet.Address) (OffIdentity, error) {
 }
 
 // MakeOffIdents creates a new []OffIdentity.
-func MakeOffIdents(parts []pwallet.Address) ([]OffIdentity, error) {
+func MakeOffIdents(parts []map[pwallet.BackendID]pwallet.Address) ([]OffIdentity, error) {
 	var err error
 	ret := make([]OffIdentity, len(parts))
 
 	for i, part := range parts {
-		if ret[i], err = MakeOffIdent(part); err != nil {
+		if ret[i], err = MakeOffIdent(part[wallet.BackendID]); err != nil {
 			break
 		}
 	}
