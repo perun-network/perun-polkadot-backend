@@ -75,6 +75,7 @@ func (a *AppID) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
+// NewRandomAppID creates a new random AppID using the provided random number generator.
 func NewRandomAppID(rng *rand.Rand) *AppID {
 	addr := dottestwallet.NewRandomAddress(rng)
 

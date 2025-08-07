@@ -22,11 +22,13 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 	"github.com/perun-network/perun-polkadot-backend/wallet"
 	sr25519test "github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test"
+	pwiretest "perun.network/go-perun/backend/sim/wire"
 	perunchannel "perun.network/go-perun/channel"
 	clienttest "perun.network/go-perun/client/test"
+	pwallet "perun.network/go-perun/wallet"
+	pwallettest "perun.network/go-perun/wallet/test"
 	"perun.network/go-perun/watcher/local"
 	"perun.network/go-perun/wire"
-	netwire "perun.network/go-perun/wire/net/simple"
 )
 
 func makeRoleSetups(rng *rand.Rand, s *test.Setup, names [2]string) (setup [2]clienttest.RoleSetup) {
@@ -39,11 +41,11 @@ func makeRoleSetups(rng *rand.Rand, s *test.Setup, names [2]string) (setup [2]cl
 		acc := wallet.AsAddr(s.Accs[i].Acc.Address())
 		setup[i] = clienttest.RoleSetup{
 			Name:              names[i],
-			Identity:          netwire.NewRandomAccount(rng),
+			Identity:          map[pwallet.BackendID]wire.Account{wallet.BackendID: pwiretest.NewRandomAccount(rng)},
 			Bus:               bus,
 			Funder:            s.Funders[i],
 			Adjudicator:       s.Adjs[i],
-			Wallet:            sr25519test.NewWallet(),
+			Wallet:            map[pwallet.BackendID]pwallettest.Wallet{wallet.BackendID: sr25519test.NewWallet()},
 			Timeout:           TestTimeoutBlocks * time.Second,
 			ChallengeDuration: 5, // 5 sec timeout
 			Watcher:           watcher,

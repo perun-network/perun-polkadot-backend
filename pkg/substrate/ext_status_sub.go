@@ -39,7 +39,7 @@ type (
 // NewExtStatusSub returns a new ExtStatusSub and takes ownership of the passed sub.
 func NewExtStatusSub(sub *author.ExtrinsicStatusSubscription) *ExtStatusSub {
 	ret := &ExtStatusSub{sub: sub}
-	ret.Closer.OnClose(sub.Unsubscribe)
+	ret.OnClose(sub.Unsubscribe)
 	return ret
 }
 

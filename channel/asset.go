@@ -15,9 +15,10 @@
 package channel
 
 import (
-	"perun.network/go-perun/channel"
 	pchannel "perun.network/go-perun/channel"
 )
+
+var _ pchannel.Asset = (*asset)(nil)
 
 // asset is the Asset of the connected substrate chain.
 // Implements the Perun Asset interface.
@@ -37,12 +38,17 @@ func (asset) MarshalBinary() (data []byte, err error) {
 }
 
 // UnmarshalBinary does nothing and returns nil since the backend has only one asset.
-func (*asset) UnmarshalBinary(data []byte) error {
+func (*asset) UnmarshalBinary(_ []byte) error {
 	return nil
 }
 
 // Equal returns true if the assets are the same.
-func (asset) Equal(b channel.Asset) bool {
+func (asset) Equal(b pchannel.Asset) bool {
 	_, ok := b.(*asset)
 	return ok
+}
+
+// Address returns nil since the address is not used in the polkadot backend.
+func (asset) Address() []byte {
+	return nil
 }

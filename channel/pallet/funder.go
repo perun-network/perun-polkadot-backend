@@ -20,6 +20,7 @@ import (
 
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/perun-network/perun-polkadot-backend/channel"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	pchannel "perun.network/go-perun/channel"
 	"perun.network/go-perun/log"
 	pwallet "perun.network/go-perun/wallet"
@@ -47,7 +48,7 @@ func (f *Funder) Fund(ctx context.Context, req pchannel.FundingReq) error {
 	if err != nil {
 		return err
 	}
-	defer sub.Close()
+	defer sub.Close() //nolint:errcheck
 
 	// Deposit our funds.
 	wReq, err := NewDepositReqFromPerun(&req, f.acc)
@@ -121,7 +122,7 @@ func calcFids(req pchannel.FundingReq) (map[channel.FundingID]pchannel.Index, er
 	ids := make(map[channel.FundingID]pchannel.Index)
 
 	for i, part := range req.Params.Parts {
-		_part, err := channel.MakeOffIdent(part)
+		_part, err := channel.MakeOffIdent(part[wallet.BackendID])
 		if err != nil {
 			return nil, err
 		}

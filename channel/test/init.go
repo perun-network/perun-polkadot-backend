@@ -15,9 +15,10 @@
 package test
 
 import (
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	pchtest "perun.network/go-perun/channel/test"
 )
 
 func init() {
-	pchtest.SetRandomizer(new(randomizer))
+	pchtest.SetRandomizer(new(randomizer), wallet.BackendID)
 }

@@ -21,7 +21,8 @@ import (
 
 	pclient "perun.network/go-perun/client"
 	clienttest "perun.network/go-perun/client/test"
-	"perun.network/go-perun/wire"
+	pwallet "perun.network/go-perun/wallet"
+	pwire "perun.network/go-perun/wire"
 	pkgtest "polycry.pt/poly-go/test"
 
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
@@ -46,14 +47,15 @@ func TestHappyAliceBob(t *testing.T) {
 		role [2]clienttest.Executer
 	)
 
-	setup := makeRoleSetups(rng, s, name)
-	role[A] = clienttest.NewAlice(t, setup[A])
-	role[B] = clienttest.NewBob(t, setup[B])
+	setups := makeRoleSetups(rng, s, name)
+	role[A] = clienttest.NewAlice(t, setups[A])
+	role[B] = clienttest.NewBob(t, setups[B])
 
 	execConfig := &clienttest.AliceBobExecConfig{
 		BaseExecConfig: clienttest.MakeBaseExecConfig(
-			[2]wire.Address{setup[A].Identity.Address(), setup[B].Identity.Address()},
+			[2]map[pwallet.BackendID]pwire.Address{pwire.AddressMapfromAccountMap(setups[A].Identity), pwire.AddressMapfromAccountMap(setups[B].Identity)},
 			channel.Asset,
+			wallet.BackendID,
 			[2]*big.Int{big.NewInt(100000000000000), big.NewInt(100000000000000)},
 			pclient.WithoutApp(),
 		),

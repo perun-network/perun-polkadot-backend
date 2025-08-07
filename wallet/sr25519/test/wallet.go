@@ -41,7 +41,7 @@ func (w *Wallet) NewRandomAccount(rng *rand.Rand) pwallet.Account {
 	if err != nil {
 		panic(err)
 	}
-	return w.Wallet.ImportSK(sk)
+	return w.ImportSK(sk)
 }
 
 // NewAddressZero returns a zero address that is strictly smaller than all
@@ -49,6 +49,8 @@ func (w *Wallet) NewRandomAccount(rng *rand.Rand) pwallet.Account {
 func NewAddressZero() *sr25519.Address {
 	return sr25519.NewAddressFromPK(ZeroPK())
 }
+
+// NewRandomAddress returns a random address from the passed entropy source.
 func NewRandomAddress(rng *rand.Rand) pwallet.Address {
 	pk, err := pkgsr25519.NewPKFromRng(rng)
 	if err != nil {

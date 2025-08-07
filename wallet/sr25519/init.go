@@ -14,8 +14,11 @@
 
 package sr25519
 
-import "perun.network/go-perun/wallet"
+import (
+	"github.com/perun-network/perun-polkadot-backend/wallet"
+	pwallet "perun.network/go-perun/wallet"
+)
 
 func init() {
-	wallet.SetBackend(new(Backend))
+	pwallet.SetBackend(new(Backend), wallet.BackendID)
 }

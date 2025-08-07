@@ -20,11 +20,13 @@ import (
 	"testing"
 
 	ptest "perun.network/go-perun/channel/test"
+
 	pwallet "perun.network/go-perun/wallet"
 	pwallettest "perun.network/go-perun/wallet/test"
 	pkgtest "polycry.pt/poly-go/test"
 
-	_ "github.com/perun-network/perun-polkadot-backend/channel/test"        // init
+	_ "github.com/perun-network/perun-polkadot-backend/channel/test" // init
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	_ "github.com/perun-network/perun-polkadot-backend/wallet/sr25519/test" // init
 )
 
@@ -37,6 +39,7 @@ func newSetup(rng *rand.Rand) *ptest.Setup {
 	opts := ptest.WithNumLocked(0).Append(
 		ptest.WithBalancesInRange(big.NewInt(0), big.NewInt(1<<60)),
 		ptest.WithNumAssets(1),
+		ptest.WithBackend(wallet.BackendID),
 		ptest.WithoutApp())
 	params, state := ptest.NewRandomParamsAndState(rng, opts)
 
@@ -44,8 +47,8 @@ func newSetup(rng *rand.Rand) *ptest.Setup {
 		ptest.WithIsFinal(!state.IsFinal))
 	params2, state2 := ptest.NewRandomParamsAndState(rng, opts2)
 
-	createAddr := func() pwallet.Address {
-		return pwallettest.NewRandomAddress(rng)
+	createAddr := func() map[pwallet.BackendID]pwallet.Address {
+		return pwallettest.NewRandomAddresses(rng, wallet.BackendID)
 	}
 
 	return &ptest.Setup{
@@ -53,7 +56,7 @@ func newSetup(rng *rand.Rand) *ptest.Setup {
 		Params2:       params2,
 		State:         state,
 		State2:        state2,
-		Account:       pwallettest.NewRandomAccount(rng),
+		Account:       pwallettest.NewRandomAccount(rng, wallet.BackendID),
 		RandomAddress: createAddr,
 	}
 }

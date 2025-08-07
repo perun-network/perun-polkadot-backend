@@ -1,4 +1,4 @@
-// Copyright 2021 PolyCrypt GmbH
+// Copyright 2025 PolyCrypt GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import (
 	"github.com/ChainSafe/go-schnorrkel"
 	"github.com/centrifuge/go-substrate-rpc-client/v4/types"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	pwallet "perun.network/go-perun/wallet"
 )
 
@@ -99,6 +100,10 @@ func (a *Address) Equal(b pwallet.Address) bool {
 // Needed by the Perun Address interface.
 func (a *Address) Cmp(b pwallet.Address) int {
 	return bytes.Compare(a.Bytes(), AsAddr(b).Bytes())
+}
+
+func (a *Address) BackendID() pwallet.BackendID {
+	return wallet.BackendID
 }
 
 // IsAddr returns whether a Perun Address has the expected Address type.

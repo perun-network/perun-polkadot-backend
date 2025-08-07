@@ -61,14 +61,14 @@ var SignaturePrefix = []byte("substrate")
 
 // SS58Address returns the SS58 of an Address for a specific network.
 func SS58Address(addr gsrpc.AccountID, network NetworkID) (string, error) {
-	return subkey.SS58Address(addr[:], uint8(network))
+	return subkey.SS58Encode(addr[:], uint16(network)), nil
 }
 
 // Meta returns the expected metadata and a success bool.
 // Can be used to check whether the connected substrate node
 // is running the right version.
 func Meta(meta *gsrpc.Metadata) (*gsrpc.MetadataV14, bool) {
-	if !(meta.Version == 14) {
+	if meta.Version != 14 {
 		return nil, false
 	}
 	return &meta.AsMetadataV14, true

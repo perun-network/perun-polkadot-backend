@@ -15,9 +15,10 @@
 package channel
 
 import (
+	"github.com/perun-network/perun-polkadot-backend/wallet"
 	"perun.network/go-perun/channel"
 )
 
 func init() {
-	channel.SetBackend(new(backend))
+	channel.SetBackend(new(backend), wallet.BackendID)
 }

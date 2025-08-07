@@ -21,6 +21,10 @@ import (
 	"github.com/perun-network/perun-polkadot-backend/pkg/substrate"
 )
 
+const (
+	BackendID = 4 // BackendID for Polkadot wallet backend.
+)
+
 type (
 	// Account defines a Perun Account with substrate specific functions.
 	Account interface {
